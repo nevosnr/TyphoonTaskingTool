@@ -4,12 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using TyphoonTaskingTool.Components;
 using TyphoonTaskingTool.Components.Account;
 using TyphoonTaskingTool.Data;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddMudServices();
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -27,9 +30,11 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-var tmscConnString = builder.Configuration.GetConnectionString("TMSCTasking") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+//TMSC Specific connection string - keeping Identity framework seperate for the time being.
+var tmscConnString = builder.Configuration.GetConnectionString("TMSCTasking") ?? throw new InvalidOperationException("Connection string 'TMSCTasking' not found.");
+builder.Services.AddDbContext<TmscDbContext>(options =>
+    options.UseSqlServer(tmscConnString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
