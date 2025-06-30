@@ -1,0 +1,70 @@
+﻿@page "/requests/details"
+@using Microsoft.EntityFrameworkCore
+@using TyphoonTaskingTool.Models
+@inject IDbContextFactory<TyphoonTaskingTool.Data.TmscDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Request</h2>
+    <hr />
+    @if (request is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">RequestShortId</dt>
+            <dd class="col-sm-10">@request.RequestShortId</dd>
+            <dt class="col-sm-2">RequestCreated</dt>
+            <dd class="col-sm-10">@request.RequestCreated</dd>
+            <dt class="col-sm-2">RankId</dt>
+            <dd class="col-sm-10">@request.RankId</dd>
+            <dt class="col-sm-2">RequestFirstName</dt>
+            <dd class="col-sm-10">@request.RequestFirstName</dd>
+            <dt class="col-sm-2">RequestLastName</dt>
+            <dd class="col-sm-10">@request.RequestLastName</dd>
+            <dt class="col-sm-2">RequestEmailAdd</dt>
+            <dd class="col-sm-10">@request.RequestEmailAdd</dd>
+            <dt class="col-sm-2">RequestContactPhone</dt>
+            <dd class="col-sm-10">@request.RequestContactPhone</dd>
+            <dt class="col-sm-2">UnitId</dt>
+            <dd class="col-sm-10">@request.UnitId</dd>
+            <dt class="col-sm-2">TeamId</dt>
+            <dd class="col-sm-10">@request.TeamId</dd>
+            <dt class="col-sm-2">RequestTitle</dt>
+            <dd class="col-sm-10">@request.RequestTitle</dd>
+            <dt class="col-sm-2">RequestTaskDescription</dt>
+            <dd class="col-sm-10">@request.RequestTaskDescription</dd>
+            <dt class="col-sm-2">StatusId</dt>
+            <dd class="col-sm-10">@request.StatusId</dd>
+            <dt class="col-sm-2">RequestArchive</dt>
+            <dd class="col-sm-10">@request.RequestArchive</dd>
+        </dl>
+        <div>
+            <a href="@($"/requests/edit?requesttaskid={request.RequestTaskId}")">Edit</a> |
+            <a href="@($"/requests")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Request? request;
+
+    [SupplyParameterFromQuery]
+    private Guid RequestTaskId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        request = await context.Requests.FirstOrDefaultAsync(m => m.RequestTaskId == RequestTaskId);
+
+        if (request is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

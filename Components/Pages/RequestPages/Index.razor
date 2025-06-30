@@ -1,0 +1,71 @@
+﻿@page "/requests"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using TyphoonTaskingTool.Models
+@using TyphoonTaskingTool.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<TyphoonTaskingTool.Data.TmscDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="requests/create">Create New</a>
+</p>
+
+<MudTable Items="_requests" Hover="true" Dense="true">
+    <HeaderContent>
+        <MudTh>Short ID</MudTh>
+        <MudTh>Created</MudTh>
+        <MudTh>Rank</MudTh>
+        <MudTh>First Name</MudTh>
+        <MudTh>Last Name</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>Phone</MudTh>
+        <MudTh>Title</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh>Archive</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Short ID">@context.RequestShortId</MudTd>
+        <MudTd DataLabel="Created">@context.RequestCreated</MudTd>
+        <MudTd DataLabel="Rank">@context.RankId</MudTd>
+        <MudTd DataLabel="First Name">@context.RequestFirstName</MudTd>
+        <MudTd DataLabel="Last Name">@context.RequestLastName</MudTd>
+        <MudTd DataLabel="Email">@context.RequestEmailAdd</MudTd>
+        <MudTd DataLabel="Phone">@context.RequestContactPhone</MudTd>
+        <MudTd DataLabel="Title">@context.RequestTitle</MudTd>
+        <MudTd DataLabel="Description">@context.RequestTaskDescription</MudTd>
+        <MudTd DataLabel="Archive">@context.RequestArchive</MudTd>
+        <MudTd DataLabel="Actions">
+            <MudIconButton Icon="@Icons.Material.Filled.Visibility"
+                           Color="Color.Primary"
+                           Variant="Variant.Text"
+                           Size="Size.Small"
+                           OnClick="@(() => ViewRequest(context.RequestTaskId))"
+                           AriaLabel="View Details" />
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+
+@code {
+    private List<Request> _requests = new();
+    private TmscDbContext _context = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _context = DbFactory.CreateDbContext();
+        _requests = await _context.Requests.ToListAsync();
+    }
+
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
+
+    private void ViewRequest(Guid taskId)
+    {
+        NavigationManager.NavigateTo($"/requests/details?requesttaskid={taskId}");
+    }
+}
