@@ -1,10 +1,11 @@
 ﻿@page "/requests/create"
 @using Microsoft.EntityFrameworkCore
+@using TyphoonTaskingTool.DTOs
 @using TyphoonTaskingTool.Models
 @using TyphoonTaskingTool.Services
 @inject IDbContextFactory<TyphoonTaskingTool.Data.TmscDbContext> DbFactory
 @inject NavigationManager NavigationManager
-@inject IGenericLookupService GenericLookupService
+@inject ILookupRankService LookupRankService
 
 <PageTitle>Create</PageTitle>
 
@@ -16,81 +17,85 @@
     <div class="col-md-4">
         <EditForm method="post" Model="Request" OnValidSubmit="AddRequest" FormName="create" Enhance>
             <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert"/>
+            <ValidationSummary class="text-danger" role="alert" />
             <div class="mb-3">
-                <label for="requestshortid" class="form-label">RequestShortId:</label> 
-                <InputText id="requestshortid" @bind-Value="Request.RequestShortId" class="form-control" /> 
-                <ValidationMessage For="() => Request.RequestShortId" class="text-danger" /> 
-            </div>        
+                <label for="requestshortid" class="form-label">RequestShortId:</label>
+                <InputText id="requestshortid" @bind-Value="Request.RequestShortId" class="form-control" />
+                <ValidationMessage For="() => Request.RequestShortId" class="text-danger" />
+            </div>
             <div class="mb-3">
-                <label for="requestcreated" class="form-label">RequestCreated:</label> 
-                <InputDate id="requestcreated" @bind-Value="Request.RequestCreated" class="form-control" /> 
-                <ValidationMessage For="() => Request.RequestCreated" class="text-danger" /> 
-            </div>        
+                <MudDatePicker Label="Select Date:" @bind-bind-Date="Request.RequestCreated"/>
+@*                 <InputDate id="requestcreated" @bind-Value="Request.RequestCreated" class="form-control" /> *@
+                <ValidationMessage For="() => Request.RequestCreated" class="text-danger" />
+            </div>
             <div class="mb-3">
-@*                 <label for="rankid" class="form-label">RankId:</label>  *@
-                <MudSelect T="int?" Label="Status" @bind-Value="Request.StatusId" Placeholder="Status">
-                    @foreach(var i in StatusList)
+                @*https://stackoverflow.com/questions/77010964/trying-to-understand-how-to-use-mudselect-with-a-list*@
+                <MudSelect T="int?" Label="Rank" @bind-Value="Request.RankId" Placeholder="Select Rank">
+                    <MudSelectItem T="int?" Value="@Request.RankId" Disabled="true">Select Rank</MudSelectItem>
+                    @if (_rankList != null)
                     {
-                        <MudSelectItem Value="@i.StatusId">@i.StatusName</MudSelectItem>
+                        @foreach (LookupRankDTO i in _rankList)
+                        {
+                            @*Key was to explictly define the type*@
+                            <MudSelectItem T="int?" Value="@i.RankId">@i.RankNameShort: @i.RankNameLong</MudSelectItem>
+                        }
                     }
-
                 </MudSelect>
-@*                 <InputNumber id="rankid" @bind-Value="Request.RankId" class="form-control" />  *@
-                <ValidationMessage For="() => Request.RankId" class="text-danger" /> 
-            </div>        
+            </div>
             <div class="mb-3">
-                <label for="requestfirstname" class="form-label">RequestFirstName:</label> 
-                <InputText id="requestfirstname" @bind-Value="Request.RequestFirstName" class="form-control" /> 
-                <ValidationMessage For="() => Request.RequestFirstName" class="text-danger" /> 
-            </div>        
+                <label for="requestfirstname" class="form-label">RequestFirstName:</label>
+                <InputText id="requestfirstname" @bind-Value="Request.RequestFirstName" class="form-control" />
+                <ValidationMessage For="() => Request.RequestFirstName" class="text-danger" />
+            </div>
             <div class="mb-3">
-                <label for="requestlastname" class="form-label">RequestLastName:</label> 
-                <InputText id="requestlastname" @bind-Value="Request.RequestLastName" class="form-control" /> 
-                <ValidationMessage For="() => Request.RequestLastName" class="text-danger" /> 
-            </div>        
+                <label for="requestlastname" class="form-label">RequestLastName:</label>
+                <InputText id="requestlastname" @bind-Value="Request.RequestLastName" class="form-control" />
+                <ValidationMessage For="() => Request.RequestLastName" class="text-danger" />
+            </div>
             <div class="mb-3">
-                <label for="requestemailadd" class="form-label">RequestEmailAdd:</label> 
-                <InputText id="requestemailadd" @bind-Value="Request.RequestEmailAdd" class="form-control" /> 
-                <ValidationMessage For="() => Request.RequestEmailAdd" class="text-danger" /> 
-            </div>        
+                <label for="requestemailadd" class="form-label">RequestEmailAdd:</label>
+                <InputText id="requestemailadd" @bind-Value="Request.RequestEmailAdd" class="form-control" />
+                <ValidationMessage For="() => Request.RequestEmailAdd" class="text-danger" />
+            </div>
             <div class="mb-3">
-                <label for="requestcontactphone" class="form-label">RequestContactPhone:</label> 
-                <InputText id="requestcontactphone" @bind-Value="Request.RequestContactPhone" class="form-control" /> 
-                <ValidationMessage For="() => Request.RequestContactPhone" class="text-danger" /> 
-            </div>        
+                <label for="requestcontactphone" class="form-label">RequestContactPhone:</label>
+                <InputText id="requestcontactphone" @bind-Value="Request.RequestContactPhone" class="form-control" />
+                <ValidationMessage For="() => Request.RequestContactPhone" class="text-danger" />
+            </div>
             <div class="mb-3">
-                <label for="unitid" class="form-label">UnitId:</label> 
-                <InputNumber id="unitid" @bind-Value="Request.UnitId" class="form-control" /> 
-                <ValidationMessage For="() => Request.UnitId" class="text-danger" /> 
-            </div>        
+                <label for="unitid" class="form-label">UnitId:</label>
+                <InputNumber id="unitid" @bind-Value="Request.UnitId" class="form-control" />
+                <ValidationMessage For="() => Request.UnitId" class="text-danger" />
+            </div>
             <div class="mb-3">
-                <label for="teamid" class="form-label">TeamId:</label> 
-                <InputNumber id="teamid" @bind-Value="Request.TeamId" class="form-control" /> 
-                <ValidationMessage For="() => Request.TeamId" class="text-danger" /> 
-            </div>        
+                <label for="teamid" class="form-label">TeamId:</label>
+                <InputNumber id="teamid" @bind-Value="Request.TeamId" class="form-control" />
+                <ValidationMessage For="() => Request.TeamId" class="text-danger" />
+            </div>
             <div class="mb-3">
-                <label for="requesttitle" class="form-label">RequestTitle:</label> 
-                <InputText id="requesttitle" @bind-Value="Request.RequestTitle" class="form-control" /> 
-                <ValidationMessage For="() => Request.RequestTitle" class="text-danger" /> 
-            </div>        
+                <label for="requesttitle" class="form-label">RequestTitle:</label>
+                <InputText id="requesttitle" @bind-Value="Request.RequestTitle" class="form-control" />
+                <ValidationMessage For="() => Request.RequestTitle" class="text-danger" />
+            </div>
             <div class="mb-3">
-                <label for="requesttaskdescription" class="form-label">RequestTaskDescription:</label> 
-                <InputText id="requesttaskdescription" @bind-Value="Request.RequestTaskDescription" class="form-control" /> 
-                <ValidationMessage For="() => Request.RequestTaskDescription" class="text-danger" /> 
-            </div>        
+                <label for="requesttaskdescription" class="form-label">RequestTaskDescription:</label>
+                <InputText id="requesttaskdescription" @bind-Value="Request.RequestTaskDescription" class="form-control" />
+                <ValidationMessage For="() => Request.RequestTaskDescription" class="text-danger" />
+            </div>
             <div class="mb-3">
-                <label for="statusid" class="form-label">StatusId:</label> 
-                <InputNumber id="statusid" @bind-Value="Request.StatusId" class="form-control" /> 
-                <ValidationMessage For="() => Request.StatusId" class="text-danger" /> 
-            </div>        
+                <label for="statusid" class="form-label">StatusId:</label>
+                <InputNumber id="statusid" @bind-Value="Request.StatusId" class="form-control" />
+                <ValidationMessage For="() => Request.StatusId" class="text-danger" />
+            </div>
             <div class="mb-3">
-                <label for="requestarchive" class="form-label">RequestArchive:</label> 
-                <MudCheckBox T="bool" id="requestarchive" @bind-Checked="Request.RequestArchive" class="form-check-input" /> 
-                <ValidationMessage For="() => Request.RequestArchive" class="text-danger" /> 
-            </div>        
+                <label for="requestarchive" class="form-label">RequestArchive:</label>
+                <MudCheckBox T="bool" id="requestarchive" @bind-Checked="Request.RequestArchive" class="form-check-input" />
+                <ValidationMessage For="() => Request.RequestArchive" class="text-danger" />
+            </div>
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
+
+
     </div>
 </div>
 
@@ -100,22 +105,46 @@
 
 @code {
 
-    private int SelectedStatusId;
-    private List<LookupStatus> StatusList = new();
+    private RequestsDTO Request = new();
+    private List<LookupRankDTO> _rankList = new();
 
-    [SupplyParameterFromForm]
-    private Request Request { get; set; } = new();
+
+    // [SupplyParameterFromForm]
+    // private Request Request { get; set; } = new();
+
+    private void OnRankChanged(int? value)
+    {
+        Request.RankId = value;
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        StatusList = await GenericLookupService.GetAllOrderedAsync();
+        var ranks = await LookupRankService.GetAllOrderedAsync();
+        _rankList = ranks ?? new();
     }
 
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddRequest()
     {
         using var context = DbFactory.CreateDbContext();
-        context.Requests.Add(Request);
+        var entity = new Models.Request
+        {
+            RequestShortId = Request.RequestShortId,
+            RequestCreated = Request.RequestCreated,
+            RankId = Request.RankId,
+            RequestFirstName = Request.RequestFirstName,
+            RequestLastName = Request.RequestLastName,
+            RequestEmailAdd = Request.RequestEmailAdd,
+            RequestContactPhone = Request.RequestContactPhone,
+            UnitId = Request.UnitId,
+            TeamId = Request.TeamId,
+            RequestTitle = Request.RequestTitle,
+            RequestTaskDescription = Request.RequestTaskDescription,
+            StatusId = Request.StatusId,
+            RequestArchive = Request.RequestArchive
+        };
+
+        context.Requests.Add(entity);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/requests");
     }
