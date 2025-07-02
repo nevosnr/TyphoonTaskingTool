@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿
 namespace TyphoonTaskingTool.DTOs
 {
     public class LookupRankDTO
