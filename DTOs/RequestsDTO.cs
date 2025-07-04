@@ -1,6 +1,4 @@
-﻿using TyphoonTaskingTool.Models;
-
-namespace TyphoonTaskingTool.DTOs
+﻿namespace TyphoonTaskingTool.DTOs
 {
     public class RequestsDTO
     {
