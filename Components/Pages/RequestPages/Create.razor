@@ -20,8 +20,7 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert" />
             <div class="mb-3">
-                <label for="requestshortid" class="form-label">RequestShortId:</label>
-                <InputText id="requestshortid" @bind-Value="Request.RequestShortId" class="form-control" />
+                <MudTextField Label="Short ID" @bind-Value="Request.RequestShortId" />
                 <ValidationMessage For="() => Request.RequestShortId" class="text-danger" />
             </div>
             <div class="mb-3">
@@ -44,8 +43,7 @@
                 </MudSelect>
             </div>
             <div class="mb-3">
-                <label for="requestfirstname" class="form-label">RequestFirstName:</label>
-                <InputText id="requestfirstname" @bind-Value="Request.RequestFirstName" class="form-control" />
+                <MudTextField Label="First Name" @bind-Value="Request.RequestFirstName"/>
                 <ValidationMessage For="() => Request.RequestFirstName" class="text-danger" />
             </div>
             <div class="mb-3">
@@ -64,14 +62,12 @@
                 <ValidationMessage For="() => Request.RequestContactPhone" class="text-danger" />
             </div>
             <div class="mb-3">
-                @*https://stackoverflow.com/questions/77010964/trying-to-understand-how-to-use-mudselect-with-a-list*@
                 <MudSelect T="int?" Label="Unit" @bind-Value="Request.UnitId" Placeholder="Select Unit">
                     <MudSelectItem T="int?" Value="@Request.UnitId" Disabled="true">Select Unit</MudSelectItem>
                     @if (_unitList != null)
                     {
                         @foreach (LookupUnitDTO i in _unitList)
                         {
-                            @*Key was to explictly define the type*@
                             <MudSelectItem T="int?" Value="@i.UnitId">@i.UnitNameShort: @i.UnitNameLong</MudSelectItem>
                         }
                     }
@@ -115,7 +111,9 @@
 
 @code {
 
-    private RequestsDTO Request = new();
+    [SupplyParameterFromForm]
+    private RequestsDTO Request { get; set; } = new();
+
     private List<LookupRankDTO> _rankList = new();
     private List<LookupUnitDTO> _unitList = new();
 
