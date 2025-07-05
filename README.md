@@ -33,6 +33,6 @@ Problems were resolved in the traditional manner - favouring search endgine resu
 - TOGAF 10 Practitioner certified
 
 
-- [Profile](https://github.com/nevosnr "David Neve")
-- [Email](mailto:david85.neve01@gmail.com)
-- [Linkedin](https://linkedin.com/in/daveneve863 "David Neve")
+[Profile](https://github.com/nevosnr "David Neve")
+[Email](mailto:david85.neve01@gmail.com)
+[Linkedin](https://linkedin.com/in/daveneve863 "David Neve")
