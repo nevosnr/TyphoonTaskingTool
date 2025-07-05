@@ -6,6 +6,7 @@
 @implements IAsyncDisposable
 @inject IDbContextFactory<TyphoonTaskingTool.Data.TmscDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject IDialogService DialogService
 
 <PageTitle>Index</PageTitle>
 
@@ -64,8 +65,22 @@
 
     public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
-    private void ViewRequest(Guid taskId)
+    private async Task ViewRequest(Guid taskId)
     {
-        NavigationManager.NavigateTo($"/requests/details?requesttaskid={taskId}");
+        //NavigationManager.NavigateTo($"/requests/details?requesttaskid={taskId}");
+
+        var parameters = new DialogParameters
+        {
+            ["RequestTaskId"] = taskId
+        };
+
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
+		};
+
+		await DialogService.ShowAsync<DetailsDialog>("Request Details", parameters, options);
     }
 }
