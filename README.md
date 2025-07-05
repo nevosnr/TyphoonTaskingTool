@@ -25,6 +25,14 @@ Problems were resolved in the traditional manner - favouring search endgine resu
 ## Author:
 
 **David Neve EngTech TMIET**
+
+- ICT Leader and Software Engineer at the Typhoon Mission Support Centre, RAF Coningsby
+- Exposure to a wide range of technologies and software development paradigms, with a focus on C# and .NET Core.
+- Awareness of multiple project management frameworks, including Agile and Waterfall methodologies.
+- ITILv4 Foundation certified
+- TOGAF 10 Practitioner certified
+
+
 - [Profile](https://github.com/nevosnr "David Neve")
 - [Email](mailto:david85.neve01@gmail.com)
 - [Linkedin](https://linkedin.com/in/daveneve863 "David Neve")
