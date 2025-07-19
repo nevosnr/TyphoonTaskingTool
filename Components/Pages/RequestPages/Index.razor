@@ -18,17 +18,18 @@
 
 <MudTable Items="_requests" Hover="true" Dense="true">
     <HeaderContent>
-        <MudTh>Short ID</MudTh>
-        <MudTh>Created</MudTh>
-        <MudTh>Rank</MudTh>
-        <MudTh>First Name</MudTh>
-        <MudTh>Last Name</MudTh>
-        <MudTh>Email</MudTh>
-        <MudTh>Phone</MudTh>
-        <MudTh>Title</MudTh>
-        <MudTh>Description</MudTh>
-        <MudTh>Archive</MudTh>
-        <MudTh>Actions</MudTh>
+        <MudTh Style="text-align:center">Short ID</MudTh>
+        <MudTh Style="text-align:center">Created</MudTh>
+        <MudTh Style="text-align:center">Rank</MudTh>
+        <MudTh Style="text-align:center">First Name</MudTh>
+        <MudTh Style="text-align:center">Last Name</MudTh>
+        <MudTh Style="text-align:center">Email</MudTh>
+        <MudTh Style="text-align:center">Phone</MudTh>
+        <MudTh Style="text-align:center">Title</MudTh>
+        <MudTh Style="text-align:center">Description</MudTh>
+        <MudTh Style="text-align:center">Archive</MudTh>
+        <MudTh Style="text-align:center">Actions</MudTh>
+ 
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Short ID">@context.RequestShortId</MudTd>
@@ -42,12 +43,26 @@
         <MudTd DataLabel="Description">@context.RequestTaskDescription</MudTd>
         <MudTd DataLabel="Archive">@context.RequestArchive</MudTd>
         <MudTd DataLabel="Actions">
-            <MudIconButton Icon="@Icons.Material.Filled.Visibility"
-                           Color="Color.Primary"
-                           Variant="Variant.Text"
-                           Size="Size.Small"
-                           OnClick="@(() => ViewRequest(context.RequestTaskId))"
-                           AriaLabel="View Details" />
+            <MudButtonGroup>
+                <MudIconButton Icon="@Icons.Material.TwoTone.Visibility"
+                               Color="Color.Primary"
+                               Variant="Variant.Text"
+                               Size="Size.Small"
+                               OnClick="@(() => ViewRequest(context.RequestTaskId))"
+                               AriaLabel="View Details" />
+			    <MudIconButton Icon="@Icons.Material.TwoTone.Edit"
+						       Color="Color.Secondary"
+                               Variant="Variant.Text"
+                               Size="Size.Small"
+                               OnClick="@(() => Console.WriteLine("Testing limit"))"
+						       AriaLabel="Edit Request" />
+                <MudIconButton Icon="@Icons.Material.TwoTone.Delete"
+                               Color="Color.Secondary"
+                               Variant="Variant.Text"
+                               Size="Size.Small"
+                               OnClick="@(() => Console.WriteLine("Exterminate"))"
+                               AriaLabel="Edit Request" />
+            </MudButtonGroup>
         </MudTd>
     </RowTemplate>
 </MudTable>
@@ -83,4 +98,5 @@
 
 		await DialogService.ShowAsync<DetailsDialog>("Request Details", parameters, options);
     }
+
 }

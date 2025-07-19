@@ -1,28 +1,70 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider />
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<MudLayout>
+    <MudAppBar Elevation="1" Color="Color.Secondary">
+        <MudIconButton Icon="@Icons.Material.TwoTone.MoreVert" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.TwoTone.AccountCircle" Color="Color.Inherit"/>
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_drawerOpen" Elevation="1">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">Select an Option</MudText>
+        </MudDrawerHeader>
+        <MudPaper Width="250px" Class="d-inline-flex py-10" Elevation="0">
+            <MudNavMenu>
+                <MudNavLink Icon="@Icons.Material.TwoTone.Create" Href="requests/create" Match="NavLinkMatch.All">Create Task</MudNavLink>
+                <MudNavLink Icon="@Icons.Material.TwoTone.ViewList" Href="requests" Match="NavLinkMatch.All">View Task</MudNavLink>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+                <MudNavGroup Title="Account" Icon="@Icons.Material.TwoTone.AccountCircle" Expanded="false">
+                    <AuthorizeView>
+                        <Authorized>
+                            <MudNavLink Icon="@Icons.Material.TwoTone.ManageAccounts" Href="Account/Manage">Manage Account</MudNavLink>
+                            <MudNavLink Icon="@Icons.Material.TwoTone.Logout" Href="Account/Logout">Log out</MudNavLink>
+                        </Authorized>
+                        <NotAuthorized>
+                            <MudNavLink Icon="@Icons.Material.TwoTone.Login" Href="Account/Login">Log in</MudNavLink>
+                            <MudNavLink Icon="@Icons.Material.TwoTone.Create" Href="Account/Register">Register</MudNavLink>
+						</NotAuthorized>
+                    </AuthorizeView>
+                </MudNavGroup>
+                    <MudDivider Class="my-2" />
+                    <MudNavGroup Icon="@Icons.Material.TwoTone.Settings" Title="Settings" Expanded="false">
+					    <MudSwitch @bind-Value="_isDarkMode" 
+                                    Color="Color.Primary" 
+                                    Class="ma-4" T="bool" 
+                                    Label="Toggle Dark Mode" />
+                    </MudNavGroup>
+                    <MudDivider Class="my-2" />
+            </MudNavMenu>
+        </MudPaper>
+    </MudDrawer>
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
             @Body
-        </article>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
-</div>
+
+
+
+@code {
+
+    //Styling with dark mode!
+    private MudTheme _theme = new MudTheme();
+	private bool _isDarkMode = false;
+
+
+    private bool _drawerOpen = false;
+
+    //Simple boolean toggle for the navigation drawer.
+    private void ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}
