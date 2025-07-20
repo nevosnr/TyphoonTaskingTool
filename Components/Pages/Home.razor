@@ -1,11 +1,29 @@
 ﻿@page "/"
 
 <PageTitle>Typhoon MSC: Portal</PageTitle>
+<MudLayout>
+	<div class="fullscreen-background">
+	</div>
+	<MudMainContent>
+			<MudContainer Class="d-flex justify-content-center align-content-center">
+				<MudStack Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
 
-<MudLayout Class="flex-md-column justify-content-center">
-	<MudText Typo="Typo.h2">Welcome to the Typhoon Mission Support Centre</MudText>
-	<MudImage Fluid="true" ObjectPosition="ObjectPosition.Center" Src="images/8556ad2d-facd-4e2e-af1d-3a0b3e529263.png" Alt="Eurofighter Typhoon" Elevation="0" />
-
+					<MudText Align="Align.Center" Typo="Typo.h2">Welcome to the Typhoon Mission Support Centre</MudText>
+					<MudGrid Justify="Justify.Center">
+						<MudItem>
+							<MudImage Width="200" Fluid="true" Src="images/getsitelogo.png" Alt="ASWC Crest" Elevation="0" />
+						</MudItem>
+						<MudItem>
+							<MudImage Width="200" Fluid="true" Src="images/8556ad2d-facd-4e2e-af1d-3a0b3e529263.png" Alt="TMSC Badge" Elevation="0" />
+						</MudItem>
+					</MudGrid>
+					<MudText Align="Align.Center" Typo="Typo.body1">The Typhoon Mission support centre, provides support to the 
+						Typhoon warfighter at home and overseas </MudText>
+				</MudStack>
+			</MudContainer>
+	</MudMainContent>
 </MudLayout>
+
+
 
 
