@@ -7,9 +7,9 @@ namespace TyphoonTaskingTool.Data;
 
 public partial class TmscDbContext : DbContext
 {
-    public TmscDbContext()
-    {
-    }
+    //public TmscDbContext()
+    //{
+    //}
 
     public TmscDbContext(DbContextOptions<TmscDbContext> options)
         : base(options)
