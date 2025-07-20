@@ -35,9 +35,9 @@
                             <MudTextField Label="Email" @bind-Value=Input.Email name="Input.Email"
                                             For="() => Input.Email"/>
                             <MudTextField Label="Password" @bind-Value=Input.Password name="Input.Password"
-                                            For="() => Input.Password"/>
+                                          For="() => Input.Password" InputType="InputType.Password" />
                             <MudTextField Label="Confirm Password" @bind-Value=Input.ConfirmPassword name="Input.ConfirmPassword"
-                                            For="() => Input.ConfirmPassword"/>
+                                            For="() => Input.ConfirmPassword" InputType="InputType.Password"/>
                         </MudCardContent>
                         <MudCardActions>
                             <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="w-100">
