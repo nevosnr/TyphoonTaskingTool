@@ -6,6 +6,7 @@
 @implements IAsyncDisposable
 @inject IDbContextFactory<TyphoonTaskingTool.Data.TmscDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDialogService DialogService
 
 <PageTitle>Index</PageTitle>
@@ -71,8 +72,38 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
         _context = DbFactory.CreateDbContext();
-        _requests = await _context.Requests.ToListAsync();
+
+        //Test of roles for debugging//
+        var roles = user.Claims
+        .Where(c => c.Type == System.Security.Claims.ClaimTypes.Role)
+        .Select(c => c.Value).ToList();
+        Console.WriteLine(roles);
+
+        foreach (var claim in user.Claims)
+        {
+            Console.WriteLine($"Type: {claim.Type}, Value: {claim.Value}");
+        }
+
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                bool _isAdmin = user.IsInRole("Administrator");
+                var userEmail = user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+
+                IQueryable<Request> query = _context.Requests;
+
+                if (!_isAdmin && !string.IsNullOrWhiteSpace(userEmail))
+                {
+                    query = query.Where(r => r.RequestEmailAdd == userEmail);
+                }
+
+                _requests = await query.ToListAsync();
+            }            
+        }
     }
 
     public async ValueTask DisposeAsync() => await _context.DisposeAsync();

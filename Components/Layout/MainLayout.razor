@@ -1,6 +1,4 @@
 ﻿@inherits LayoutComponentBase;
-@inject NavigationManager NavigationManager;
-@implements IDisposable;
 
 <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 <MudPopoverProvider />
@@ -19,7 +17,7 @@
                 <MudItem Class="mud-nav-link-child px-5">
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                        <input type="hidden" name="ReturnUrl" value="" />
                         <MudButton StartIcon="@Icons.Material.TwoTone.Logout" ButtonType="ButtonType.Submit"
                                    Color="Color.Inherit">Log Out</MudButton>
                     </form>
@@ -66,9 +64,6 @@
     </MudMainContent>
 </MudLayout>
 
-
-
-
 @code {
 
     //Styling with dark mode!
@@ -83,22 +78,5 @@
     private void ToggleDrawer()
     {
         _drawerOpen = !_drawerOpen;
-    }
-
-    protected override void OnInitialized()
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
-    }
-
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }

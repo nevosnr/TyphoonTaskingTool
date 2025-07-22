@@ -22,15 +22,17 @@
 <div class="row">
     <div class="col-lg-6">
         <StatusMessage Message="@Message" />
-@*         https://www.johnnydevcraft.com/blazor-ssr-mudfields-editcontext-issues/ *@
         <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
             <DataAnnotationsValidator />
             <MudGrid>
                 <MudItem xs="12" sm="7">
                     <MudCard>
                         <MudCardContent>
+                            @*         https://www.johnnydevcraft.com/blazor-ssr-mudfields-editcontext-issues/ *@
                             @* MudBlazor is interactive however .Net Core Identity is static and so cause of errors against editContext
                                 the above link provided the answer to the issue where 'name' had to be included in the MudTextField
+                                (This was done before I discovered a community library for SSR in MudBlazor. Non-Static workaround remains for 
+                                awareness/learning point)
                             *@
                             <MudTextField Label="Email" @bind-Value=Input.Email name="Input.Email"
                                             For="() => Input.Email"/>
