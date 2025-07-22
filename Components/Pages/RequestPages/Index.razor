@@ -11,7 +11,13 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Full List of Tasks</h1>
+<MudText Align="MudBlazor.Align.End" Typo="Typo.h3">Full List Of Tasks</MudText>
+
+<style>
+    .blur-on-diag-open {
+        backdrop-filter: blur(5px);
+    }
+</style>
 
 
 <MudTable Items="_requests" Hover="true" Dense="true">
@@ -52,19 +58,18 @@
 						       Color="Color.Secondary"
                                Variant="Variant.Text"
                                Size="Size.Small"
-                               OnClick="@(() => Console.WriteLine("Testing limit"))"
+                               OnClick="@(() => Console.WriteLine("Testing limit"))"  
 						       AriaLabel="Edit Request" />
                 <MudIconButton Icon="@Icons.Material.TwoTone.Delete"
                                Color="Color.Secondary"
                                Variant="Variant.Text"
                                Size="Size.Small"
-                               OnClick="@(() => Console.WriteLine("Exterminate"))"
+                               OnClick="@(() => Console.WriteLine("Exterminate"))" 
                                AriaLabel="Edit Request" />
             </MudButtonGroup>
         </MudTd>
     </RowTemplate>
 </MudTable>
-
 
 @code {
     private List<Request> _requests = new();
@@ -75,17 +80,6 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         _context = DbFactory.CreateDbContext();
-
-        //Test of roles for debugging//
-        var roles = user.Claims
-        .Where(c => c.Type == System.Security.Claims.ClaimTypes.Role)
-        .Select(c => c.Value).ToList();
-        Console.WriteLine(roles);
-
-        foreach (var claim in user.Claims)
-        {
-            Console.WriteLine($"Type: {claim.Type}, Value: {claim.Value}");
-        }
 
         if (user.Identity != null)
         {
@@ -110,20 +104,22 @@
 
     private async Task ViewRequest(Guid taskId)
     {
-        //NavigationManager.NavigateTo($"/requests/details?requesttaskid={taskId}");
-
+        //Set the correct Task ID
         var parameters = new DialogParameters
         {
-            ["RequestTaskId"] = taskId
+            ["RequestTaskId"] = taskId,
         };
 
+        //Options associated with the dialog popup
         var options = new DialogOptions
         {
-            CloseButton = true,
-            MaxWidth = MaxWidth.Medium,
-            FullWidth = true
+            BackgroundClass = "blur-on-diag-open",
+            CloseButton = true, //Close cross in top right of dialog
+            MaxWidth = MaxWidth.Large, //Limits of window width its Dynamic
+            FullWidth = true // if omited or false will shrink dialog to width of text fields
 		};
 
+        //Asyncronsly show dialog box (DetailsDialog componnet) with task details and set params as above.
 		await DialogService.ShowAsync<DetailsDialog>("Request Details", parameters, options);
     }
 

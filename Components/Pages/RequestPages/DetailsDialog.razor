@@ -13,13 +13,8 @@
 		else
 		{
 			<MudCard Class="pa-4">
-				<MudCardHeader>
-@* 					<MudText Typo="Typo.h6">
-						Request Details
-					</MudText> *@
-				</MudCardHeader>
 				<MudCardContent>
-					<MudText><strong>Task ID:</strong>@_request.RequestTaskId</MudText>
+					<MudText><strong>Task ID: </strong>@_request.RequestTaskId</MudText>
 					<MudText Color="Color.Error" Class="mt-1 mb-2">
 						When quoting your task ID, Please use last 8 characters
 					</MudText>
@@ -31,16 +26,39 @@
 		}
 	</DialogContent>
 	<DialogActions>
-		<MudButton OnClick="CloseDialog" Color="Color.Primary">Close</MudButton>
+		<MudButtonGroup>
+			<MudIconButton Icon="@Icons.Material.TwoTone.Close"
+						   Color="Color.Primary"
+						   Variant="Variant.Text"
+						   Size="Size.Small"
+						   OnClick="CloseDialog"
+						   AriaLabel="View Details" />
+			<MudIconButton Icon="@Icons.Material.TwoTone.Edit"
+						   Color="Color.Secondary"
+						   Variant="Variant.Text"
+						   Size="Size.Small"
+						   OnClick="@(() => Console.WriteLine("Testing limit"))"
+						   AriaLabel="Edit Request" />
+			<MudIconButton Icon="@Icons.Material.TwoTone.Delete"
+						   Color="Color.Secondary"
+						   Variant="Variant.Text"
+						   Size="Size.Small"
+						   OnClick="@(() => Console.WriteLine("Exterminate"))"
+						   AriaLabel="Edit Request" />
+		</MudButtonGroup>
 	</DialogActions>
 </MudDialog>
 
 @code {
 	[CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+	//Param passed from Index.razor ViewRequest()
 	[Parameter] public Guid RequestTaskId { get; set; }
 
 	private Request? _request;
 
+	//performs actions when component is first loaded.
+	//Here is is setting the private _request variable (of type Request) to the returned value of RequestTaskId
+	//A null check is performed within the componnet and will infinitely loop a 'loading' animation
 	protected override async Task OnInitializedAsync()
 	{
 		await using var ctx = await DbFactory.CreateDbContextAsync();
