@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase;
+@inject NavigationManager NavigationManager;
+@implements IDisposable;
 
 <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 <MudPopoverProvider />
@@ -9,7 +11,21 @@
     <MudAppBar Elevation="1" Color="Color.Secondary">
         <MudIconButton Icon="@Icons.Material.TwoTone.MoreVert" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
         <MudSpacer/>
-        <MudIconButton Icon="@Icons.Material.TwoTone.AccountCircle" Color="Color.Inherit"/>
+        <AuthorizeView>
+            <NotAuthorized>
+                <MudButton StartIcon="@Icons.Material.TwoTone.Login" Href="Account/Login">Login</MudButton>
+            </NotAuthorized>
+            <Authorized>
+                <MudItem Class="mud-nav-link-child px-5">
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                        <MudButton StartIcon="@Icons.Material.TwoTone.Logout" ButtonType="ButtonType.Submit"
+                                   Color="Color.Inherit">Log Out</MudButton>
+                    </form>
+                </MudItem>
+            </Authorized>
+        </AuthorizeView>
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" Elevation="1">
         <MudDrawerHeader>
@@ -24,7 +40,7 @@
                     <AuthorizeView>
                         <Authorized>
                             <MudNavLink Icon="@Icons.Material.TwoTone.ManageAccounts" Href="Account/Manage">Manage Account</MudNavLink>
-                            <MudNavLink Icon="@Icons.Material.TwoTone.Logout" Href="Account/Logout">Log out</MudNavLink>
+
                         </Authorized>
                         <NotAuthorized>
                             <MudNavLink Icon="@Icons.Material.TwoTone.Login" Href="Account/Login">Log in</MudNavLink>
@@ -59,12 +75,30 @@
     private MudTheme _theme = new MudTheme();
 	private bool _isDarkMode = false;
 
-
-    private bool _drawerOpen = false;
+    private string? currentUrl;
 
     //Simple boolean toggle for the navigation drawer.
+    private bool _drawerOpen = false;
+
     private void ToggleDrawer()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }

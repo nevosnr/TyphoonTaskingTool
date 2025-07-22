@@ -36,12 +36,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
-//TMSC Specific connection string - keeping Identity framework seperate for the time being.
+//TMSC Specific connection string - whislt pointing at the same Db, two seperate contexts allow for disconnected updates
 var tmscConnString = builder.Configuration.GetConnectionString("TMSCTasking") ?? throw new InvalidOperationException("Connection string 'TMSCTasking' not found.");
 builder.Services.AddDbContextFactory<TmscDbContext>(options =>
     options.UseSqlServer(tmscConnString)
     .EnableDetailedErrors()
-    .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)))
+    .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))) 
+    //Added configureWarnings to ignore exception warnings thrown when seeding 'dynamic data'
     ;
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

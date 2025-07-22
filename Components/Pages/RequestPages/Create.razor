@@ -12,10 +12,6 @@
 
 <h1>Create Request</h1>
 
-<EditForm method="post" Model="Request" OnValidSubmit="AddRequest" FormName="create" Enhance>
-@*     <DataAnnotationsValidator /> *@
-@*     <ValidationSummary class="text-danger" role="alert" /> *@
-</EditForm>
 <MudForm @ref="_form" Model="@Request" @bind-IsValid="_isValid" @bind-Errors="_errors">
     <MudPaper Class="pa-4 mb-4" Elevation="1">
         <MudText Typo="Typo.h6">Requester Details</MudText>
@@ -27,7 +23,7 @@
                     {
                         @foreach (LookupRankDTO i in _rankList)
                         {
-                            @*Key was to explictly define the type*@
+                            @*Key was to explictly define the type with T="int?"*@
                             <MudSelectItem T="int?" Value="@i.RankId">@i.RankNameShort: @i.RankNameLong</MudSelectItem>
                         }
                     }
@@ -90,6 +86,9 @@
     private bool _isValid;
     private string[] _errors = Array.Empty<string>();
 
+    [SupplyParameterFromForm]
+    private RequestsDTO Request { get; set; } = new();
+
     private async Task SubmitForm()
     {
         await _form.Validate();
@@ -118,15 +117,9 @@
 
     }
 
-    [SupplyParameterFromForm]
-    private RequestsDTO Request { get; set; } = new();
 
     private List<LookupRankDTO> _rankList = new();
     private List<LookupUnitDTO> _unitList = new();
-
-
-    // [SupplyParameterFromForm]
-    // private Request Request { get; set; } = new();
 
     private void OnRankChanged(int? value)
     {
@@ -143,29 +136,29 @@
     }
 
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
-    private async Task AddRequest()
-    {
-        Console.WriteLine("I've got to here");
-        using var context = DbFactory.CreateDbContext();
-        var entity = new Models.Request
-        {
-            RequestShortId = Request.RequestShortId,
-            RequestCreated = Request.RequestCreated,
-            RankId = Request.RankId,
-            RequestFirstName = Request.RequestFirstName,
-            RequestLastName = Request.RequestLastName,
-            RequestEmailAdd = Request.RequestEmailAdd,
-            RequestContactPhone = Request.RequestContactPhone,
-            UnitId = Request.UnitId,
-            TeamId = Request.TeamId,
-            RequestTitle = Request.RequestTitle,
-            RequestTaskDescription = Request.RequestTaskDescription,
-            StatusId = Request.StatusId,
-            RequestArchive = Request.RequestArchive
-        };
+    // private async Task AddRequest()
+    // {
+    //     Console.WriteLine("I've got to here");
+    //     using var context = DbFactory.CreateDbContext();
+    //     var entity = new Models.Request
+    //     {
+    //         RequestShortId = Request.RequestShortId,
+    //         RequestCreated = Request.RequestCreated,
+    //         RankId = Request.RankId,
+    //         RequestFirstName = Request.RequestFirstName,
+    //         RequestLastName = Request.RequestLastName,
+    //         RequestEmailAdd = Request.RequestEmailAdd,
+    //         RequestContactPhone = Request.RequestContactPhone,
+    //         UnitId = Request.UnitId,
+    //         TeamId = Request.TeamId,
+    //         RequestTitle = Request.RequestTitle,
+    //         RequestTaskDescription = Request.RequestTaskDescription,
+    //         StatusId = Request.StatusId,
+    //         RequestArchive = Request.RequestArchive
+    //     };
 
-        context.Requests.Add(entity);
-        await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/requests");
-    }
+    //     context.Requests.Add(entity);
+    //     await context.SaveChangesAsync();
+    //     NavigationManager.NavigateTo("/requests");
+    // }
 }
