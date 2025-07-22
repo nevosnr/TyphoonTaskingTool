@@ -12,31 +12,31 @@
 
 <h1>Create Request</h1>
 
-<EditForm method="post" Model="Request" OnValidSubmit="AddRequest" FormName="create" Enhance>
-@*     <DataAnnotationsValidator /> *@
-@*     <ValidationSummary class="text-danger" role="alert" /> *@
-</EditForm>
+<MudText Typo="Typo.body1" Class="mb-4">
+	Use this form to create a new task request for the MSC. Ensure all details are filled out correctly.
+    If you wish to track the progression of your task you should register for an account.</MudText>
+
 <MudForm @ref="_form" Model="@Request" @bind-IsValid="_isValid" @bind-Errors="_errors">
     <MudPaper Class="pa-4 mb-4" Elevation="1">
         <MudText Typo="Typo.h6">Requester Details</MudText>
         <MudGrid>
-            <MudItem xs="12" sm="6">
-                @*https://stackoverflow.com/questions/77010964/trying-to-understand-how-to-use-mudselect-with-a-list*@
+            <MudItem xs="4" sm="3">
                 <MudSelect T="int?" Label="Rank" @bind-Value="Request.RankId" Placeholder="Select Rank" Variant="Variant.Outlined">
                     @if (_rankList != null)
                     {
                         @foreach (LookupRankDTO i in _rankList)
                         {
-                            @*Key was to explictly define the type*@
+                            @*https://stackoverflow.com/questions/77010964/trying-to-understand-how-to-use-mudselect-with-a-list*@
+                            @*Key was to explictly define the type with T="int?"*@
                             <MudSelectItem T="int?" Value="@i.RankId">@i.RankNameShort: @i.RankNameLong</MudSelectItem>
                         }
                     }
                 </MudSelect>
             </MudItem>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="4" sm="4">
                 <MudTextField Label="First Name" @bind-Value="Request.RequestFirstName" Variant="Variant.Outlined" />
             </MudItem>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="4" sm="5">
                 <MudTextField Label="Last Name" @bind-Value="Request.RequestLastName" Variant="Variant.Outlined" />
             </MudItem>
             <MudItem xs="12" sm="6">
@@ -86,9 +86,12 @@
 
 @code {
 
-    private MudForm _form;
+    private MudForm? _form;
     private bool _isValid;
     private string[] _errors = Array.Empty<string>();
+
+    [SupplyParameterFromForm]
+    private RequestsDTO Request { get; set; } = new();
 
     private async Task SubmitForm()
     {
@@ -118,15 +121,8 @@
 
     }
 
-    [SupplyParameterFromForm]
-    private RequestsDTO Request { get; set; } = new();
-
     private List<LookupRankDTO> _rankList = new();
     private List<LookupUnitDTO> _unitList = new();
-
-
-    // [SupplyParameterFromForm]
-    // private Request Request { get; set; } = new();
 
     private void OnRankChanged(int? value)
     {
@@ -140,32 +136,5 @@
 
         var units = await LookupUnitService.GetAllOrderedAsync();
         _unitList = units ?? new();
-    }
-
-    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
-    private async Task AddRequest()
-    {
-        Console.WriteLine("I've got to here");
-        using var context = DbFactory.CreateDbContext();
-        var entity = new Models.Request
-        {
-            RequestShortId = Request.RequestShortId,
-            RequestCreated = Request.RequestCreated,
-            RankId = Request.RankId,
-            RequestFirstName = Request.RequestFirstName,
-            RequestLastName = Request.RequestLastName,
-            RequestEmailAdd = Request.RequestEmailAdd,
-            RequestContactPhone = Request.RequestContactPhone,
-            UnitId = Request.UnitId,
-            TeamId = Request.TeamId,
-            RequestTitle = Request.RequestTitle,
-            RequestTaskDescription = Request.RequestTaskDescription,
-            StatusId = Request.StatusId,
-            RequestArchive = Request.RequestArchive
-        };
-
-        context.Requests.Add(entity);
-        await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/requests");
     }
 }

@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using MudBlazor.Services;
 using TyphoonTaskingTool.Components;
 using TyphoonTaskingTool.Components.Account;
 using TyphoonTaskingTool.Data;
-using MudBlazor.Services;
 using TyphoonTaskingTool.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,30 +21,35 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddAuthorization();
+
+/*
+Two DbContexts are used in this application: ApplicationDbContext for Identity and TmscDbContext for Tasking databases respectivly.
+Whilst it may not be the most performant, it provides clear seperation between Identity Core and the Tasking database, 
+allowing them both to be manipulated independently. 
+*/
+
+var connectionString = builder.Configuration.GetConnectionString("TMSCTasking") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString)
+    .EnableDetailedErrors()
+    .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
+
+var tmscConnString = builder.Configuration.GetConnectionString("TMSCTasking") ?? throw new InvalidOperationException("Connection string 'TMSCTasking' not found.");
+builder.Services.AddDbContextFactory<TmscDbContext>(options =>
+    options.UseSqlServer(tmscConnString)
+    .EnableDetailedErrors()
+    .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)))
+    //Added configureWarnings to ignore exception warnings thrown when seeding 'dynamic data'
+    ;
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
-//TMSC Specific connection string - keeping Identity framework seperate for the time being.
-var tmscConnString = builder.Configuration.GetConnectionString("TMSCTasking") ?? throw new InvalidOperationException("Connection string 'TMSCTasking' not found.");
-builder.Services.AddDbContextFactory<TmscDbContext>(options =>
-    options.UseSqlServer(tmscConnString));
-
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddSignInManager()
-    .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<ILookupRankService, LookupRankService>();
 builder.Services.AddScoped<ILookupUnitService, LookupUnitService>();
@@ -66,7 +72,6 @@ else
 }
 
 app.UseHttpsRedirection();
-
 
 app.UseAntiforgery();
 

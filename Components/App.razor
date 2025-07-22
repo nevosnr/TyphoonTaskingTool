@@ -26,6 +26,8 @@
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
+    [Inject]
+	private NavigationManager NavigationManager { get; set; } = default!;
     private IComponentRenderMode? PageRenderMode =>
-        HttpContext.AcceptsInteractiveRouting() ? InteractiveServer : null;
+        HttpContext.AcceptsInteractiveRouting() && !NavigationManager.Uri.Contains("/Account") ? InteractiveServer : null;
 }

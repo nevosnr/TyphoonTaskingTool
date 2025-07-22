@@ -3,21 +3,24 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TyphoonTaskingTool.Data;
 
 #nullable disable
 
-namespace TyphoonTaskingTool.Migrations
+namespace TyphoonTaskingTool.Migrations.Identity
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250719203252_CreateIdentitySchema_AL1")]
+    partial class CreateIdentitySchema_AL1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "9.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -47,32 +50,6 @@ namespace TyphoonTaskingTool.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "d04e5b4c-10f0-4b2a-a25a-3fbe26f63566",
-                            Name = "user",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "9e30e59b-edd6-4cf2-b8d1-c254f43549dd",
-                            Name = "mscuser",
-                            NormalizedName = "MSCUSER"
-                        },
-                        new
-                        {
-                            Id = "bf704d5b-3971-4f86-b75e-07d625399087",
-                            Name = "teamlead",
-                            NormalizedName = "TEAMLEAD"
-                        },
-                        new
-                        {
-                            Id = "392f7177-e777-4ffc-a57d-2ed84d16ae01",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -160,18 +137,6 @@ namespace TyphoonTaskingTool.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "a478c1b6-20aa-48e9-9abf-7e7c3bfcbd3e",
-                            RoleId = "392f7177-e777-4ffc-a57d-2ed84d16ae01"
-                        },
-                        new
-                        {
-                            UserId = "418cb504-2c5d-4e58-9059-e22de9594e74",
-                            RoleId = "d04e5b4c-10f0-4b2a-a25a-3fbe26f63566"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -256,40 +221,6 @@ namespace TyphoonTaskingTool.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "a478c1b6-20aa-48e9-9abf-7e7c3bfcbd3e",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "321ba5eb-92ed-471a-bcca-6de713418ce7",
-                            Email = "admin@finalproject.co.uk",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@FINALPROJECT.CO.UK",
-                            NormalizedUserName = "ADMIN@FINALPROJECT.CO.UK",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIRTERi3J9t0qJH7do3jaJphdh3nxDEvzYxrcBY4PQDmigZC+iH65mgx422C2Z3xGA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "ee24f2f8-a33c-41fa-9d2a-fd88ee0b67a5",
-                            TwoFactorEnabled = false,
-                            UserName = "admin"
-                        },
-                        new
-                        {
-                            Id = "418cb504-2c5d-4e58-9059-e22de9594e74",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "695d3411-4b97-44c1-9475-4c117fb9d74e",
-                            Email = "guestuser@finalproject.co.uk",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "GUESTUSER@FINALPROJECT.CO.UK",
-                            NormalizedUserName = "GUESTUSER@FINALPROJECT.CO.UK",
-                            PasswordHash = "AQAAAAIAAYagAAAAENRm7KWpz42YurvR6qKJP8cGksDAvssC55HEG3FYSTLzpO87hRYPxxGEcEwsGOrraw==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "1ecfdc98-7c44-444a-a9d5-43373e00c98f",
-                            TwoFactorEnabled = false,
-                            UserName = "guestuser"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
