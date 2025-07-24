@@ -20,7 +20,7 @@
 </style>
 
 
-<MudTable Items="_requests" Hover="true" Dense="true">
+<MudTable Items="_requests" Hover="true">
     <HeaderContent>
         <MudTh Style="text-align:center">Short ID</MudTh>
         <MudTh Style="text-align:center">Created</MudTh>
@@ -66,7 +66,7 @@
                                Color="Color.Secondary"
                                Variant="Variant.Text"
                                Size="Size.Small"
-                               OnClick="@(() => Console.WriteLine("Exterminate"))" 
+                               OnClick="@(() => SoftDeleteTask(context.RequestTaskId))" 
                                AriaLabel="Edit Request" />
             </MudButtonGroup>
         </MudTd>
@@ -79,30 +79,27 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        _context = DbFactory.CreateDbContext();
-
-        if (user.Identity != null)
-        {
-            if (user.Identity.IsAuthenticated)
-            {
-                bool _isAdmin = user.IsInRole("Administrator");
-                var userEmail = user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
-
-                IQueryable<Request> query = _context.Requests;
-
-                if (!_isAdmin && !string.IsNullOrWhiteSpace(userEmail))
-                {
-                    query = query.Where(r => r.RequestEmailAdd == userEmail);
-                }
-
-                _requests = await query.ToListAsync();
-            }            
-        }
+        await RefreshRequestsAsync();
     }
 
     public async ValueTask DisposeAsync() => await _context.DisposeAsync();
+
+    private async Task SoftDeleteTask(Guid taskId)
+    {
+        Console.WriteLine("Soft delete task will add archive flag to task NO REAL DELETE!");
+
+        var task = _requests.FirstOrDefault(x => x.RequestTaskId == taskId);
+
+        if (task != null)
+        {
+            task.RequestArchive = true;
+            await _context.SaveChangesAsync();
+            await RefreshRequestsAsync();
+
+        }
+
+        StateHasChanged();
+    }
 
     private async Task ViewRequest(Guid taskId)
     {
@@ -122,7 +119,35 @@
 		};
 
         //Asyncronsly show dialog box (DetailsDialog componnet) with task details and set params as above.
-		await DialogService.ShowAsync<DetailsDialog>("Request Details", parameters, options);
+        await DialogService.ShowAsync<DetailsDialog>("Request Details", parameters, options);
+    }
+
+    //Refresh of the UI could lead to duplicated code so it has been abstracted to its own function.
+    private async Task RefreshRequestsAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _context = DbFactory.CreateDbContext();
+
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                bool _isAdmin = user.IsInRole("Administrator");
+                var userEmail = user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+
+
+                IQueryable<Request> query = _context.Requests;
+
+                if (!_isAdmin && !string.IsNullOrWhiteSpace(userEmail))
+                {
+                    query = query.Where(r => r.RequestEmailAdd == userEmail);
+                    query = query.Where(r => r.RequestArchive == false || r.RequestArchive == null);
+                }
+
+                _requests = await query.ToListAsync();
+            }
+        }
     }
 
 }

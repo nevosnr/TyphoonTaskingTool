@@ -1,0 +1,30 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using TyphoonTaskingTool.DTOs
+@using TyphoonTaskingTool.Data
+@using TyphoonTaskingTool.Models
+@inject IDbContextFactory<TmscDbContext> DbFactory
+
+<MudDialog>
+	<DialogContent>
+		@if (_request == null)
+		{
+			<MudProgressCircular Indeterminate="true"/>
+		}
+		else
+		{
+			
+		}
+	</DialogContent>
+	<DialogActions>
+		<MudButtonGroup>
+
+		</MudButtonGroup>
+	</DialogActions>
+</MudDialog>
+
+@code {
+
+	[SupplyParameterFromForm]
+	private RequestsDTO? _request { get; set; }
+
+}

@@ -62,7 +62,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await using var ctx = await DbFactory.CreateDbContextAsync();
-		_request = await ctx.Requests.AsNoTracking().SingleOrDefaultAsync(r => r.RequestTaskId == RequestTaskId);
+		_request = await ctx.Requests.AsNoTracking().FirstOrDefaultAsync(r => r.RequestTaskId == RequestTaskId);
 	}
 
 	private void CloseDialog()
