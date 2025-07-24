@@ -60,7 +60,7 @@
 						       Color="Color.Secondary"
                                Variant="Variant.Text"
                                Size="Size.Small"
-                               OnClick="@(() => Console.WriteLine("Testing limit"))"  
+                               OnClick="@(() => EditRequest(context.RequestTaskId))"  
 						       AriaLabel="Edit Request" />
                 <MudIconButton Icon="@Icons.Material.TwoTone.Delete"
                                Color="Color.Secondary"
@@ -120,6 +120,25 @@
 
         //Asyncronsly show dialog box (DetailsDialog componnet) with task details and set params as above.
         await DialogService.ShowAsync<DetailsDialog>("Request Details", parameters, options);
+    }
+
+    private async Task EditRequest(Guid taskId)
+    {
+        //Creating an edit dialog repeats the same as view dialog.
+        var parameters = new DialogParameters
+        {
+            ["RequestTaskId"] = taskId,
+		};
+
+        var options = new DialogOptions
+        {
+            BackgroundClass = "blur-on-diag-open",
+            CloseButton = true,
+            MaxWidth = MaxWidth.Large,
+            FullWidth = true
+        };
+
+		await DialogService.ShowAsync<EditDialog>("Edit Request", parameters, options);
     }
 
     //Refresh of the UI could lead to duplicated code so it has been abstracted to its own function.

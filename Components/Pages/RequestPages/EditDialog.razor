@@ -24,7 +24,23 @@
 
 @code {
 
+	[CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;]
+
+	[Parameter]
+	public Guid requestTaskId { get; set; }
+
 	[SupplyParameterFromForm]
-	private RequestsDTO? _request { get; set; }
+	private Request? _request { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await using var ctx = await DbFactory.CreateDbContextAsync();
+		_request = await ctx.Requests.FirstOrDefaultAsync(r => r.RequestTaskId == requestTaskId);
+	}
+
+	private async Task UpdateRequest()
+	{
+		
+	}
 
 }
