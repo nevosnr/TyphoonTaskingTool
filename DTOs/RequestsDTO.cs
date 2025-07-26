@@ -10,6 +10,8 @@
 
         public int? RankId { get; set; }
 
+        public string? RankShortName { get; set; }
+
         public string? RequestFirstName { get; set; }
 
         public string? RequestLastName { get; set; }

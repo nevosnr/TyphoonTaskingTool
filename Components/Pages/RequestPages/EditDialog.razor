@@ -3,28 +3,119 @@
 @using TyphoonTaskingTool.Data
 @using TyphoonTaskingTool.Models
 @inject IDbContextFactory<TmscDbContext> DbFactory
+@inject NavigationManager NavigationManager
 
-<MudDialog>
-	<DialogContent>
-		@if (_request == null)
-		{
-			<MudProgressCircular Indeterminate="true"/>
-		}
-		else
-		{
-			
-		}
-	</DialogContent>
-	<DialogActions>
-		<MudButtonGroup>
+<CascadingAuthenticationState>
+	<MudDialog>
+		<DialogContent>
+			@if (_request == null)
+			{
+				<MudProgressCircular Indeterminate="true"/>
+				<MudText Typo="Typo.body1">Loading request details...</MudText>
+			}
+			else
+			{
+				<MudCard>
+					<MudCardContent>
+						<MudForm @ref="_form" Model="@_request" @bind-IsValid="_isValid" @bind-Errors="_errors">
+							<MudPaper Class="pa-4 mb-4" Elevation="1">
+								<MudGrid>
+									<MudItem xs="4" sm="4">
+										<MudTextField Label="Task Number" Variant="Variant.Outlined" @bind-Value="_request.RequestTaskId" Disabled="true" />
+									</MudItem>
+									<MudItem xs="4" sm="3">
+										<MudTextField Label="Rank"  Variant="Variant.Outlined" @bind-Value="_request.RankId" Disabled="true"/>
+									</MudItem>
+									<MudItem xs="4" sm="3">
+										<MudTextField Label="Last Name" Variant="Variant.Outlined" @bind-Value="_request.RequestLastName" Disabled="true" />
+									</MudItem>
+									<MudItem>
+										<MudDivider/>
+									</MudItem>
+									<MudItem xs="12" sm="12">
+										<MudTextField Label="Task Title" Variant="Variant.Outlined" Disabled="true" @bind-Value="_request.RequestTitle"/>
+									</MudItem>
+									<MudItem xs="12" sm="12">
+										<MudTextField Label="Task Description" Variant="Variant.Outlined" Disabled="true" @bind-Value="_request.RequestTaskDescription" />
+									</MudItem>
+								</MudGrid>
+								<MudDivider/>
+								<MudGrid>
+									<MudItem xs="12" sm="12">
+										<MudText Typo="Typo.h6">Update History: </MudText>
+									</MudItem>
+									<MudItem>
+										<MudList T="string">
+											@foreach (var update in _updateHistory)
+											{
+												<MudListItem>
+													<MudText Typo="Typo.body1">@($"{update.UpdateTimeStamp:g} - {update.UpdateBy}:")</MudText>
+													<MudText Typo="Typo.body2">@($"{update.UpdateDescription}")</MudText>
+												</MudListItem>
+											}
+											@if (!_updateHistory.Any())
+											{
+												<MudListItem>
+													<MudText Typo="Typo.body2">No updates available for this request.</MudText>
+												</MudListItem>
+											}
+										</MudList>
+									</MudItem>
+								</MudGrid>
+							</MudPaper>
+							<AuthorizeView>
+								<Authorized>
+									<MudText Typo="Typo.h6">Enter an update as required.</MudText>
+									<MudTextField Label="Update: " @bind-Value="_newUpdate" Variant="Variant.Outlined" Lines="5" AutoGrow="true" />
+								</Authorized>
+								<NotAuthorized>
+									<MudText Typo="Typo.body1">You do not have the required permissions to amend this task</MudText>
+								</NotAuthorized>
+							</AuthorizeView>
+						</MudForm>
+					</MudCardContent>
+				</MudCard>
+			}
+		</DialogContent>
+		<DialogActions>
+			<MudButtonGroup>
+				<MudIconButton Icon="@Icons.Material.TwoTone.Close"
+								Color="Color.Primary"
+								Variant="Variant.Text"
+								Size="Size.Small"
+								OnClick="CloseDialog"
+								AriaLabel="View Details" />
+				<MudIconButton Icon="@Icons.Material.TwoTone.Save"
+								Color="Color.Secondary"
+								Variant="Variant.Text"
+								Size="Size.Small"
+								OnClick="UpdateRequest"
+								AriaLabel="Edit Request" />
+				<MudIconButton Icon="@Icons.Material.TwoTone.Delete"
+								Color="Color.Secondary"
+								Variant="Variant.Text"
+								Size="Size.Small"
+								OnClick="@(() => Console.WriteLine("Exterminate"))"
+								AriaLabel="Edit Request" />
+			</MudButtonGroup>
+		</DialogActions>
+	</MudDialog>
+</CascadingAuthenticationState>
 
-		</MudButtonGroup>
-	</DialogActions>
-</MudDialog>
+
 
 @code {
 
-	[CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;]
+	private MudForm? _form;
+	private bool _isValid;
+	private string[] _errors = Array.Empty<string>();
+	private List<RequestUpdatesDTO> _updateHistory = new();
+	private string _newUpdate = string.Empty;
+
+	[CascadingParameter]
+	private Task<AuthenticationState> _authStateTask { get; set; } = default!;
+	[CascadingParameter] 
+	IMudDialogInstance MudDialog { get; set; } = default!;
 
 	[Parameter]
 	public Guid requestTaskId { get; set; }
@@ -36,11 +127,75 @@
 	{
 		await using var ctx = await DbFactory.CreateDbContextAsync();
 		_request = await ctx.Requests.FirstOrDefaultAsync(r => r.RequestTaskId == requestTaskId);
+
+		_updateHistory = await ctx.RequestUpdates
+			.Where(ru => ru.RequestTaskId == requestTaskId)
+			.OrderByDescending(ru => ru.UpdateTimeStamp)
+			.Select(ru => new RequestUpdatesDTO
+			{
+				UpdateId = ru.UpdateId,
+				RequestTaskId = ru.RequestTaskId,
+				UpdateTimeStamp = ru.UpdateTimeStamp,
+				UpdateDescription = ru.UpdateDescription,
+				UpdateBy = ru.UpdateBy
+			})
+			.ToListAsync();
+
+		if (_request == null)
+		{
+			NavigationManager.NavigateTo("notfound");
+		}
+	}
+
+	private bool RequestExists(Guid requestTaskId)
+	{
+		using var ctx = DbFactory.CreateDbContext();
+		return ctx.Requests.Any(r => r.RequestTaskId == requestTaskId);
 	}
 
 	private async Task UpdateRequest()
 	{
-		
+		await _form.Validate();
+		//Request is updated in two tables, Requests and RequestUpdates. RequestUpdates is used for auditing purposes.
+		using var ctx = DbFactory.CreateDbContext();
+		ctx.Attach(_request!).State = EntityState.Modified;
+
+		var authState = await _authStateTask;
+		var user = authState.User;
+
+		var auditLog = new RequestUpdate
+			{
+				UpdateId = Guid.NewGuid(),
+				RequestTaskId = _request.RequestTaskId,
+				UpdateTimeStamp = DateTime.UtcNow,
+				UpdateDescription = _newUpdate,
+				UpdateBy = user.Identity?.Name
+			};
+
+			ctx.RequestUpdates.Add(auditLog);
+
+		try
+		{
+			await ctx.SaveChangesAsync();
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			if (!RequestExists(_request!.RequestTaskId))
+			{
+				NavigationManager.NavigateTo("notfound");
+			}
+			else
+			{
+				throw;				
+			}
+		}
+
+		NavigationManager.NavigateTo("/requests");
+	}
+
+	private void CloseDialog()
+	{
+		MudDialog.Close(DialogResult.Ok(true));
 	}
 
 }

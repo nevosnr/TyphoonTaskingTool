@@ -1,6 +1,7 @@
 ﻿@page "/requests"
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
+@using TyphoonTaskingTool.DTOs
 @using TyphoonTaskingTool.Models
 @using TyphoonTaskingTool.Data
 @implements IAsyncDisposable
@@ -39,7 +40,7 @@
     <RowTemplate>
         <MudTd DataLabel="Short ID">@context.RequestShortId</MudTd>
         <MudTd DataLabel="Created">@context.RequestCreated</MudTd>
-        <MudTd DataLabel="Rank">@context.RankId</MudTd>
+        <MudTd DataLabel="Rank">@context.RankShortName</MudTd>
         <MudTd DataLabel="First Name">@context.RequestFirstName</MudTd>
         <MudTd DataLabel="Last Name">@context.RequestLastName</MudTd>
         <MudTd DataLabel="Email">@context.RequestEmailAdd</MudTd>
@@ -74,7 +75,7 @@
 </MudTable>
 
 @code {
-    private List<Request> _requests = new();
+    private List<RequestsDTO> _requests = new();
     private TmscDbContext _context = default!;
 
     protected override async Task OnInitializedAsync()
@@ -138,7 +139,7 @@
             FullWidth = true
         };
 
-		await DialogService.ShowAsync<EditDialog>("Edit Request", parameters, options);
+        await DialogService.ShowAsync<EditDialog>("Edit Request", parameters, options);
     }
 
     //Refresh of the UI could lead to duplicated code so it has been abstracted to its own function.
@@ -155,16 +156,66 @@
                 bool _isAdmin = user.IsInRole("Administrator");
                 var userEmail = user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
 
-
-                IQueryable<Request> query = _context.Requests;
-
-                if (!_isAdmin && !string.IsNullOrWhiteSpace(userEmail))
+                if (_isAdmin)
                 {
-                    query = query.Where(r => r.RequestEmailAdd == userEmail);
-                    query = query.Where(r => r.RequestArchive == false || r.RequestArchive == null);
+                    _requests = await (from r in _context.Requests
+                                       join rk in _context.LookupRanks on r.RankId equals rk.RankId
+                                       select new RequestsDTO
+                                       {
+                                            RequestTaskId = r.RequestTaskId,
+                                            RequestShortId = r.RequestShortId,
+                                            RequestCreated = r.RequestCreated,
+                                            RankId = rk.RankId,
+                                            RankShortName = rk.RankNameShort,
+                                            RequestFirstName = r.RequestFirstName,
+                                            RequestLastName = r.RequestLastName,
+                                            RequestEmailAdd = r.RequestEmailAdd,
+                                            RequestContactPhone = r.RequestContactPhone,
+                                            UnitId = r.UnitId,
+                                            TeamId = r.TeamId,
+                                            RequestTitle = r.RequestTitle,
+                                            RequestTaskDescription = r.RequestTaskDescription,
+                                            StatusId = r.StatusId,
+										    RequestArchive = r.RequestArchive
+                                       }).ToListAsync();
                 }
+                else if (!string.IsNullOrWhiteSpace(userEmail))
+                {
+                    _requests = await (from r in _context.Requests
+                                       join rk in _context.LookupRanks on r.RankId equals rk.RankId
+                                       where r.RequestEmailAdd == userEmail && (r.RequestArchive == false || r.RequestArchive == null)
+                                       select new RequestsDTO
+                                       {
+                                           RequestTaskId = r.RequestTaskId,
+                                           RequestShortId = r.RequestShortId,
+                                           RequestCreated = r.RequestCreated,
+                                           RankId = rk.RankId,
+                                           RankShortName = rk.RankNameShort,
+                                           RequestFirstName = r.RequestFirstName,
+                                           RequestLastName = r.RequestLastName,
+                                           RequestEmailAdd = r.RequestEmailAdd,
+                                           RequestContactPhone = r.RequestContactPhone,
+                                           UnitId = r.UnitId,
+                                           TeamId = r.TeamId,
+                                           RequestTitle = r.RequestTitle,
+                                           RequestTaskDescription = r.RequestTaskDescription,
+                                           StatusId = r.StatusId,
+                                           RequestArchive = r.RequestArchive
+                                           
+									   }).ToListAsync();
+                }
+                {
+                    
+                }
+                // IQueryable<Request> query = _context.Requests;
 
-                _requests = await query.ToListAsync();
+                // if (!_isAdmin && !string.IsNullOrWhiteSpace(userEmail))
+                // {
+                //     query = query.Where(r => r.RequestEmailAdd == userEmail);
+                //     query = query.Where(r => r.RequestArchive == false || r.RequestArchive == null);
+                // }
+
+                // _requests = await query.ToListAsync();
             }
         }
     }

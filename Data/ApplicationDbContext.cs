@@ -20,28 +20,24 @@ namespace TyphoonTaskingTool.Data
                     Id = "d04e5b4c-10f0-4b2a-a25a-3fbe26f63566",
                     Name = "user",
                     NormalizedName = "USER"
-
                 },
                 new IdentityRole
                 {
                     Id = "9e30e59b-edd6-4cf2-b8d1-c254f43549dd",
                     Name = "mscuser",
                     NormalizedName = "MSCUSER"
-
                 },
                 new IdentityRole
                 {
                     Id = "bf704d5b-3971-4f86-b75e-07d625399087",
                     Name = "teamlead",
                     NormalizedName = "TEAMLEAD"
-
                 },
                 new IdentityRole
                 {
                     Id = "392f7177-e777-4ffc-a57d-2ed84d16ae01",
                     Name = "Administrator",
                     NormalizedName = "ADMINISTRATOR"
-
                 }
             );
 
@@ -68,6 +64,46 @@ namespace TyphoonTaskingTool.Data
                     PasswordHash = hasher.HashPassword(null, "P@ssword1"),
                     EmailConfirmed = true,
                 }
+                //new ApplicationUser
+                //{
+                //    Id = "",
+                //    Email = "ixtslead@finalproject.co.uk",
+                //    NormalizedEmail = "IXTSLEAD@FINALPROJECT.CO.UK",
+                //    NormalizedUserName = "IXTSLEAD@FINALPROJECT.CO.UK",
+                //    UserName = "ixtslead",
+                //    PasswordHash = hasher.HashPassword(null, "P@ssword1"),
+                //    EmailConfirmed = true,
+                //},
+                //new ApplicationUser
+                //{
+                //    Id = "",
+                //    Email = "wssrlead@finalproject.co.uk",
+                //    NormalizedEmail = "WSSRLEAD@FINALPROJECT.CO.UK",
+                //    NormalizedUserName = "WSSRLEAD@FINALPROJECT.CO.UK",
+                //    UserName = "wssrlead",
+                //    PasswordHash = hasher.HashPassword(null, "P@ssword1"),
+                //    EmailConfirmed = true,
+                //},
+                //new ApplicationUser
+                //{
+                //    Id = "",
+                //    Email = "ixtsuser@finalproject.co.uk",
+                //    NormalizedEmail = "IXTSUSER@FINALPROJECT.CO.UK",
+                //    NormalizedUserName = "IXTSUSER@FINALPROJECT.CO.UK",
+                //    UserName = "ixtsuser",
+                //    PasswordHash = hasher.HashPassword(null, "P@ssword1"),
+                //    EmailConfirmed = true,
+                //},
+                //new ApplicationUser
+                //{
+                //    Id = "",
+                //    Email = "wssrsuser@finalproject.co.uk",
+                //    NormalizedEmail = "WSSRUSER@FINALPROJECT.CO.UK",
+                //    NormalizedUserName = "WSSRUSER@FINALPROJECT.CO.UK",
+                //    UserName = "wssrsuser",
+                //    PasswordHash = hasher.HashPassword(null, "P@ssword1"),
+                //    EmailConfirmed = true,
+                //}
             );
 
             builder.Entity<IdentityUserRole<string>>().HasData(
@@ -76,6 +112,26 @@ namespace TyphoonTaskingTool.Data
                     RoleId = "392f7177-e777-4ffc-a57d-2ed84d16ae01", // Administrator role
                     UserId = "a478c1b6-20aa-48e9-9abf-7e7c3bfcbd3e", // Admin user
                 },
+                //new IdentityUserRole<string>
+                //{
+                //    RoleId = "9e30e59b-edd6-4cf2-b8d1-c254f43549dd", // MSC User role
+                //    UserId = "", // MSC user (IXTS)
+                //},
+                //new IdentityUserRole<string>
+                //{
+                //    RoleId = "bf704d5b-3971-4f86-b75e-07d625399087", // MSC Team Lead role
+                //    UserId = "", // MSC Lead (IXTS)
+                //},
+                //new IdentityUserRole<string>
+                //{
+                //    RoleId = "9e30e59b-edd6-4cf2-b8d1-c254f43549dd", // MSC User role
+                //    UserId = "", // MSC user (WSSR)
+                //},
+                //new IdentityUserRole<string>
+                //{
+                //    RoleId = "bf704d5b-3971-4f86-b75e-07d625399087", // MSC Team Lead role
+                //    UserId = "", // MSC Lead (WSSR)
+                //},
                 new IdentityUserRole<string>
                 {
                     RoleId = "d04e5b4c-10f0-4b2a-a25a-3fbe26f63566", // User role

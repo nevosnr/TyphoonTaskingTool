@@ -31,8 +31,13 @@
         </MudDrawerHeader>
         <MudPaper Width="250px" Class="d-inline-flex py-10" Elevation="0">
             <MudNavMenu>
+                <MudNavLink Icon="@Icons.Material.TwoTone.Home" Href="" Match="NavLinkMatch.All">Home</MudNavLink>
                 <MudNavLink Icon="@Icons.Material.TwoTone.Create" Href="requests/create" Match="NavLinkMatch.All">Create Task</MudNavLink>
-                <MudNavLink Icon="@Icons.Material.TwoTone.ViewList" Href="requests" Match="NavLinkMatch.All">View Task</MudNavLink>
+                <AuthorizeView>
+                    <Authorized>
+                        <MudNavLink Icon="@Icons.Material.TwoTone.ViewList" Href="requests" Match="NavLinkMatch.All">View Task</MudNavLink>
+                    </Authorized>
+                </AuthorizeView>
 
                 <MudNavGroup Title="Account" Icon="@Icons.Material.TwoTone.AccountCircle" Expanded="false">
                     <AuthorizeView>
