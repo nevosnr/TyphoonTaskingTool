@@ -2,8 +2,10 @@
 @using TyphoonTaskingTool.DTOs
 @using TyphoonTaskingTool.Data
 @using TyphoonTaskingTool.Models
+@using TyphoonTaskingTool.Services
 @inject IDbContextFactory<TmscDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject ILookupStatusService LookupStatusService
 
 <CascadingAuthenticationState>
 	<MudDialog>
@@ -62,11 +64,23 @@
 										</MudList>
 									</MudItem>
 								</MudGrid>
+								<MudDivider />
 							</MudPaper>
 							<AuthorizeView>
 								<Authorized>
 									<MudText Typo="Typo.h6">Enter an update as required.</MudText>
 									<MudTextField Label="Update: " @bind-Value="_newUpdate" Variant="Variant.Outlined" Lines="5" AutoGrow="true" />
+									<MudItem>
+										<MudSelect T="int?" Label="Set current Status" @bind-Value="_request.StatusId" Variant="Variant.Outlined">
+											@if (_statusList != null)
+										{
+											@foreach (LookupStatusDTO i in _statusList)
+											{
+													<MudSelectItem T="int?" Value="@i.StatusId">@i.StatusName: @i.StatusDescription</MudSelectItem>
+											}
+										}
+										</MudSelect>
+									</MudItem>
 								</Authorized>
 								<NotAuthorized>
 									<MudText Typo="Typo.body1">You do not have the required permissions to amend this task</MudText>
@@ -110,10 +124,12 @@
 	private bool _isValid;
 	private string[] _errors = Array.Empty<string>();
 	private List<RequestUpdatesDTO> _updateHistory = new();
+	private List<LookupStatusDTO> _statusList = new();
 	private string _newUpdate = string.Empty;
 
 	[CascadingParameter]
 	private Task<AuthenticationState> _authStateTask { get; set; } = default!;
+
 	[CascadingParameter] 
 	IMudDialogInstance MudDialog { get; set; } = default!;
 
@@ -125,6 +141,9 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		var statues = await LookupStatusService.GetAllOrderedAsync();
+		_statusList = statues ?? new();
+
 		await using var ctx = await DbFactory.CreateDbContextAsync();
 		_request = await ctx.Requests.FirstOrDefaultAsync(r => r.RequestTaskId == requestTaskId);
 
@@ -169,6 +188,7 @@
 				RequestTaskId = _request.RequestTaskId,
 				UpdateTimeStamp = DateTime.UtcNow,
 				UpdateDescription = _newUpdate,
+				StatusId = _request.StatusId,
 				UpdateBy = user.Identity?.Name
 			};
 

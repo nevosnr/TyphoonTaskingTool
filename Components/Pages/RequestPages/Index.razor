@@ -12,7 +12,7 @@
 
 <PageTitle>Index</PageTitle>
 
-<MudText Align="MudBlazor.Align.End" Typo="Typo.h3">Full List Of Tasks</MudText>
+<MudText Align="MudBlazor.Align.End" Typo="Typo.h3">FULL LIST OF TASKS</MudText>
 
 <style>
     .blur-on-diag-open {
@@ -21,10 +21,8 @@
 </style>
 
 
-<MudTable Items="_requests" Hover="true">
+<MudTable Items="_requests">
     <HeaderContent>
-        <MudTh Style="text-align:center">Short ID</MudTh>
-        <MudTh Style="text-align:center">Created</MudTh>
         <MudTh Style="text-align:center">Rank</MudTh>
         <MudTh Style="text-align:center">First Name</MudTh>
         <MudTh Style="text-align:center">Last Name</MudTh>
@@ -33,13 +31,10 @@
         <MudTh Style="text-align:center">Title</MudTh>
         <MudTh Style="text-align:center">Description</MudTh>
         <MudTh Style="text-align:center">Status</MudTh>
-        <MudTh Style="text-align:center">Archive</MudTh>
         <MudTh Style="text-align:center">Actions</MudTh>
  
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Short ID">@context.RequestShortId</MudTd>
-        <MudTd DataLabel="Created">@context.RequestCreated</MudTd>
         <MudTd DataLabel="Rank">@context.RankShortName</MudTd>
         <MudTd DataLabel="First Name">@context.RequestFirstName</MudTd>
         <MudTd DataLabel="Last Name">@context.RequestLastName</MudTd>
@@ -47,8 +42,8 @@
         <MudTd DataLabel="Phone">@context.RequestContactPhone</MudTd>
         <MudTd DataLabel="Title">@context.RequestTitle</MudTd>
         <MudTd DataLabel="Description">@context.RequestTaskDescription</MudTd>
-        <MudTd DataLabel="Status">@context.StatusId</MudTd>
-        <MudTd DataLabel="Archive">@context.RequestArchive</MudTd>
+        <MudTd DataLabel="Status"><MudChip T="string" Disabled="true" Color="Color.Primary">@context.StatusName</MudChip></MudTd>
+		
         <MudTd DataLabel="Actions">
             <MudButtonGroup>
                 <MudIconButton Icon="@Icons.Material.TwoTone.Visibility"
@@ -160,6 +155,7 @@
                 {
                     _requests = await (from r in _context.Requests
                                        join rk in _context.LookupRanks on r.RankId equals rk.RankId
+                                       join stat in _context.LookupStatuses on r.StatusId equals stat.StatusId
                                        select new RequestsDTO
                                        {
                                             RequestTaskId = r.RequestTaskId,
@@ -175,7 +171,7 @@
                                             TeamId = r.TeamId,
                                             RequestTitle = r.RequestTitle,
                                             RequestTaskDescription = r.RequestTaskDescription,
-                                            StatusId = r.StatusId,
+                                            StatusName = stat.StatusName,
 										    RequestArchive = r.RequestArchive
                                        }).ToListAsync();
                 }
@@ -183,6 +179,7 @@
                 {
                     _requests = await (from r in _context.Requests
                                        join rk in _context.LookupRanks on r.RankId equals rk.RankId
+                                       join stat in _context.LookupStatuses on r.StatusId equals stat.StatusId
                                        where r.RequestEmailAdd == userEmail && (r.RequestArchive == false || r.RequestArchive == null)
                                        select new RequestsDTO
                                        {
@@ -199,25 +196,12 @@
                                            TeamId = r.TeamId,
                                            RequestTitle = r.RequestTitle,
                                            RequestTaskDescription = r.RequestTaskDescription,
-                                           StatusId = r.StatusId,
+                                           StatusName = stat.StatusName,
                                            RequestArchive = r.RequestArchive
                                            
 									   }).ToListAsync();
                 }
-                {
-                    
-                }
-                // IQueryable<Request> query = _context.Requests;
-
-                // if (!_isAdmin && !string.IsNullOrWhiteSpace(userEmail))
-                // {
-                //     query = query.Where(r => r.RequestEmailAdd == userEmail);
-                //     query = query.Where(r => r.RequestArchive == false || r.RequestArchive == null);
-                // }
-
-                // _requests = await query.ToListAsync();
             }
         }
     }
-
 }

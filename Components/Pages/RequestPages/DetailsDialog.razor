@@ -1,4 +1,5 @@
 ﻿@using Microsoft.EntityFrameworkCore
+@using TyphoonTaskingTool.DTOs
 @using TyphoonTaskingTool.Data
 @using TyphoonTaskingTool.Models
 @inject IDbContextFactory<TmscDbContext> DbFactory
@@ -21,6 +22,16 @@
 					<MudDivider Class="my-2" />
 					<MudText><strong>Task: </strong>@_request.RequestTitle</MudText>
 					<MudText><strong>Task Description: </strong>@_request.RequestTaskDescription</MudText>
+					<MudItem>
+						<MudList T="string">
+							@foreach (var update in _viewUpdates)
+						{
+							<MudListItem>
+								<MudText Typo="Typo.body1">@($"{update.UpdateDescription}")</MudText>
+							</MudListItem>
+						}
+						</MudList>
+					</MudItem>
 				</MudCardContent>
 			</MudCard>
 		}
@@ -43,7 +54,7 @@
 						   Color="Color.Secondary"
 						   Variant="Variant.Text"
 						   Size="Size.Small"
-						   OnClick="@(() => Console.WriteLine("Exterminate"))"
+						   OnClick="@(() => Console.WriteLine("Soft Delete (Set Flag)"))"
 						   AriaLabel="Edit Request" />
 		</MudButtonGroup>
 	</DialogActions>
@@ -56,6 +67,8 @@
 
 	private Request? _request;
 
+	private List<RequestUpdatesDTO> _viewUpdates = new();
+
 	//performs actions when component is first loaded.
 	//Here is is setting the private _request variable (of type Request) to the returned value of RequestTaskId
 	//A null check is performed within the componnet and will infinitely loop a 'loading' animation
@@ -63,6 +76,20 @@
 	{
 		await using var ctx = await DbFactory.CreateDbContextAsync();
 		_request = await ctx.Requests.AsNoTracking().FirstOrDefaultAsync(r => r.RequestTaskId == RequestTaskId);
+
+		_viewUpdates = await ctx.RequestUpdates
+			.AsNoTracking()
+			.Where(vu => vu.RequestTaskId == RequestTaskId)
+			.OrderByDescending(vu => vu.UpdateTimeStamp)
+			.Select(vu => new RequestUpdatesDTO
+			{
+				UpdateId = vu.UpdateId,
+				RequestTaskId = vu.RequestTaskId,
+				UpdateTimeStamp = vu.UpdateTimeStamp,
+				UpdateDescription = vu.UpdateDescription,
+				UpdateBy = vu.UpdateBy
+
+			}).ToListAsync();
 	}
 
 	private void CloseDialog()

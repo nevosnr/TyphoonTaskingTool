@@ -14,6 +14,7 @@
                 <MudButton StartIcon="@Icons.Material.TwoTone.Login" Href="Account/Login">Login</MudButton>
             </NotAuthorized>
             <Authorized>
+                <MudText>You are logged in as: <strong>@context.User.Identity?.Name</strong></MudText>
                 <MudItem Class="mud-nav-link-child px-5">
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />

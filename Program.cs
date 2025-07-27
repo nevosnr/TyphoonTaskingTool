@@ -54,6 +54,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped<ILookupRankService, LookupRankService>();
 builder.Services.AddScoped<ILookupUnitService, LookupUnitService>();
 builder.Services.AddScoped<ILookupTeamService, LookupTeamService>();
+builder.Services.AddScoped<ILookupStatusService, LookupStatusService>();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
