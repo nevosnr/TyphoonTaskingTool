@@ -147,18 +147,17 @@
 		await using var ctx = await DbFactory.CreateDbContextAsync();
 		_request = await ctx.Requests.FirstOrDefaultAsync(r => r.RequestTaskId == requestTaskId);
 
-		_updateHistory = await ctx.RequestUpdates
-			.Where(ru => ru.RequestTaskId == requestTaskId)
-			.OrderByDescending(ru => ru.UpdateTimeStamp)
-			.Select(ru => new RequestUpdatesDTO
+		_updateHistory = await (from ru in ctx.RequestUpdates
+			where ru.RequestTaskId == requestTaskId
+			orderby ru.UpdateTimeStamp descending
+			select new RequestUpdatesDTO
 			{
 				UpdateId = ru.UpdateId,
 				RequestTaskId = ru.RequestTaskId,
 				UpdateTimeStamp = ru.UpdateTimeStamp,
 				UpdateDescription = ru.UpdateDescription,
 				UpdateBy = ru.UpdateBy
-			})
-			.ToListAsync();
+			}).ToListAsync();
 
 		if (_request == null)
 		{

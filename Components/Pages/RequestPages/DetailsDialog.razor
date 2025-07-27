@@ -77,19 +77,17 @@
 		await using var ctx = await DbFactory.CreateDbContextAsync();
 		_request = await ctx.Requests.AsNoTracking().FirstOrDefaultAsync(r => r.RequestTaskId == RequestTaskId);
 
-		_viewUpdates = await ctx.RequestUpdates
-			.AsNoTracking()
-			.Where(vu => vu.RequestTaskId == RequestTaskId)
-			.OrderByDescending(vu => vu.UpdateTimeStamp)
-			.Select(vu => new RequestUpdatesDTO
-			{
-				UpdateId = vu.UpdateId,
-				RequestTaskId = vu.RequestTaskId,
-				UpdateTimeStamp = vu.UpdateTimeStamp,
-				UpdateDescription = vu.UpdateDescription,
-				UpdateBy = vu.UpdateBy
-
-			}).ToListAsync();
+		_viewUpdates = await (from vu in ctx.RequestUpdates
+							  where vu.RequestTaskId == RequestTaskId
+							  orderby vu.UpdateTimeStamp descending
+								select new RequestUpdatesDTO
+								{
+								  UpdateId = vu.UpdateId,
+								  RequestTaskId = vu.RequestTaskId,
+								  UpdateTimeStamp = vu.UpdateTimeStamp,
+								  UpdateDescription = vu.UpdateDescription,
+								  UpdateBy = vu.UpdateBy
+								}).ToListAsync();
 	}
 
 	private void CloseDialog()
