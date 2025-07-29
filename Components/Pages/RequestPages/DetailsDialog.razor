@@ -9,29 +9,61 @@
 	<DialogContent>
 		@if (_request == null)
 		{
-			<MudProgressCircular Indeterminate="true"/>
+			<MudProgressCircular Indeterminate="true" />
+			<MudText Typo="Typo.body1">Loading request details...</MudText>
 		}
 		else
 		{
-			<MudCard Class="pa-4">
+			<MudCard>
 				<MudCardContent>
-					<MudText><strong>Task ID: </strong>@_request.RequestTaskId</MudText>
-					<MudText Color="Color.Error" Class="mt-1 mb-2">
-						When quoting your task ID, Please use last 8 characters
-					</MudText>
-					<MudDivider Class="my-2" />
-					<MudText><strong>Task: </strong>@_request.RequestTitle</MudText>
-					<MudText><strong>Task Description: </strong>@_request.RequestTaskDescription</MudText>
-					<MudItem>
-						<MudList T="string">
-							@foreach (var update in _viewUpdates)
-						{
-							<MudListItem>
-								<MudText Typo="Typo.body1">@($"{update.UpdateDescription}")</MudText>
-							</MudListItem>
-						}
-						</MudList>
-					</MudItem>
+					<MudForm>
+						<MudPaper Class="pa-4 mb-4" Elevation="1">
+							<MudGrid>
+								<MudItem xs="4" sm="4">
+									<MudTextField Label="Task Number" Variant="Variant.Outlined" @bind-Value="_request.RequestTaskId" Disabled="true" />
+								</MudItem>
+								<MudItem xs="4" sm="3">
+									<MudTextField Label="Rank" Variant="Variant.Outlined" @bind-Value="_request.RankId" Disabled="true" />
+								</MudItem>
+								<MudItem xs="4" sm="3">
+									<MudTextField Label="Last Name" Variant="Variant.Outlined" @bind-Value="_request.RequestLastName" Disabled="true" />
+								</MudItem>
+								<MudItem>
+									<MudDivider />
+								</MudItem>
+								<MudItem xs="12" sm="12">
+									<MudTextField Label="Task Title" Variant="Variant.Outlined" Disabled="true" @bind-Value="_request.RequestTitle" />
+								</MudItem>
+								<MudItem xs="12" sm="12">
+									<MudTextField Label="Task Description" Variant="Variant.Outlined" Disabled="true" @bind-Value="_request.RequestTaskDescription" />
+								</MudItem>
+							</MudGrid>
+							<MudDivider />
+							<MudGrid>
+								<MudItem xs="12" sm="12">
+									<MudText Typo="Typo.h6">Update History: </MudText>
+								</MudItem>
+								<MudItem>
+									<MudList T="string">
+										@foreach (var update in _viewUpdates)
+										{
+											<MudListItem>
+												<MudText Typo="Typo.body1">@($"{update.UpdateTimeStamp:g} - {update.UpdateBy}:")</MudText>
+												<MudText Typo="Typo.body2">@($"{update.UpdateDescription}")</MudText>
+											</MudListItem>
+										}
+										@if (!_viewUpdates.Any())
+										{
+											<MudListItem>
+												<MudText Typo="Typo.body2">No updates available for this request.</MudText>
+											</MudListItem>
+										}
+									</MudList>
+								</MudItem>
+							</MudGrid>
+							<MudDivider />
+						</MudPaper>						
+					</MudForm>
 				</MudCardContent>
 			</MudCard>
 		}
@@ -44,18 +76,6 @@
 						   Size="Size.Small"
 						   OnClick="CloseDialog"
 						   AriaLabel="View Details" />
-			<MudIconButton Icon="@Icons.Material.TwoTone.Edit"
-						   Color="Color.Secondary"
-						   Variant="Variant.Text"
-						   Size="Size.Small"
-						   OnClick="@(() => Console.WriteLine("Testing limit"))"
-						   AriaLabel="Edit Request" />
-			<MudIconButton Icon="@Icons.Material.TwoTone.Delete"
-						   Color="Color.Secondary"
-						   Variant="Variant.Text"
-						   Size="Size.Small"
-						   OnClick="@(() => Console.WriteLine("Soft Delete (Set Flag)"))"
-						   AriaLabel="Edit Request" />
 		</MudButtonGroup>
 	</DialogActions>
 </MudDialog>
@@ -88,6 +108,8 @@
 								  UpdateDescription = vu.UpdateDescription,
 								  UpdateBy = vu.UpdateBy
 								}).ToListAsync();
+
+
 	}
 
 	private void CloseDialog()
