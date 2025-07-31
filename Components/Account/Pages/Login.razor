@@ -15,7 +15,7 @@
 <MudPaper Class="display-6 mx-auto mt-8" Elevation="4" MaxWidth="500px">
     <MudText Typo="Typo.h4" GutterBottom="true">Log In</MudText>
     <EditForm Model="Input"  OnValidSubmit="LoginUser" FormName="login">
-        <MudAlert Severity="Severity.Error" Dense="true" Elevation="0" Variant="Variant.Text" Class="mb-4" Text="@errorMessage"/>
+        
         <MudTextField @bind-Value="Input.Email"
                         Label="Email Address"
                         Placeholder="name@finalproject.com"
@@ -33,25 +33,37 @@
 					  Required="true"
                       Margin="Margin.Normal"
                       InputType="InputType.Password"
+                      autocomplete="new-password"             
                       Class= "mb-3"
                       For="() => Input.Password"/>
 		<MudCheckBox @bind-Value="Input.RememberMe" 
                         Label="Keep me Logged in"
                         Class="mb-3"
                         name="Input.RememberMe" />
-        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="w-100">
-            Log In
-        </MudButton>
-        <MudStack Spacing="1">
-			<MudNavLink Href="Account/ForgotPassword" Class="text-decoration-none">Forgot your password?</MudNavLink>
-        </MudStack>
+        <MudButtonGroup>
+            <MudButton StartIcon="@Icons.Material.TwoTone.Login"
+                           Color="Color.Primary"
+                           Variant="Variant.Text"
+                           Size="Size.Medium"
+                           ButtonType="ButtonType.Submit"
+                           >LOG IN </MudButton>
+            <MudButton StartIcon="@Icons.Material.TwoTone.Cancel"
+                           Color="Color.Secondary"
+                           Variant="Variant.Text"
+                           Size="Size.Medium"
+                           Href="/"
+                           >CANCEL</MudButton>
+            <MudButton StartIcon="@Icons.Material.TwoTone.Password"
+                       Color="Color.Secondary"
+                       Variant="Variant.Text"
+                       Size="Size.Medium"
+                       Href="Account/ForgotPassword">Forgot Password</MudButton>
+        </MudButtonGroup>
     </EditForm>
 </MudPaper>
 
 @code {
     private string? errorMessage;
-
-    // private MudForm? _form;
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
@@ -71,10 +83,10 @@
         }
     }
 
+    
+
     public async Task LoginUser()
     {
-
-
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
             var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
@@ -82,12 +94,6 @@
             {
                 Logger.LogInformation("User logged in.");
                 RedirectManager.RedirectTo(ReturnUrl);
-            }
-            else if (result.RequiresTwoFactor)
-            {
-                RedirectManager.RedirectTo(
-                    "Account/LoginWith2fa",
-                    new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
             }
             else if (result.IsLockedOut)
             {
@@ -97,8 +103,7 @@
             else
             {
                 errorMessage = "Error: Invalid login attempt.";
-            }
-        
+            }        
     }
 
     private sealed class InputModel

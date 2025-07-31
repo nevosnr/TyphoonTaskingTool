@@ -153,6 +153,7 @@
 
                 if (_isAdmin)
                 {
+					// Using LINQ to join Requests with LookupRanks and LookupStatuses
                     _requests = await (from r in _context.Requests
                                        join rk in _context.LookupRanks on r.RankId equals rk.RankId
                                        join stat in _context.LookupStatuses on r.StatusId equals stat.StatusId
