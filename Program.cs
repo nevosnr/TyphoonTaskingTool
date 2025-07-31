@@ -7,8 +7,12 @@ using TyphoonTaskingTool.Components;
 using TyphoonTaskingTool.Components.Account;
 using TyphoonTaskingTool.Data;
 using TyphoonTaskingTool.Services;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VSConnuri")!);
+builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -33,13 +37,13 @@ Whilst it may not be the most performant, it provides clear seperation between I
 allowing them both to be manipulated independently. 
 */
 
-var connectionString = builder.Configuration.GetConnectionString("TMSCTasking") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("AzurePubConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)
     .EnableDetailedErrors()
     .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
-var tmscConnString = builder.Configuration.GetConnectionString("TMSCTasking") ?? throw new InvalidOperationException("Connection string 'TMSCTasking' not found.");
+var tmscConnString = builder.Configuration.GetConnectionString("AzurePubConnection") ?? throw new InvalidOperationException("Connection string 'TMSCTasking' not found.");
 builder.Services.AddDbContextFactory<TmscDbContext>(options =>
     options.UseSqlServer(tmscConnString)
     .EnableDetailedErrors()
