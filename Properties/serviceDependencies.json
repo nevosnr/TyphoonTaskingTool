@@ -1,12 +1,9 @@
 {
   "dependencies": {
-    "mssql1": {
-      "type": "mssql",
-      "connectionId": "ConnectionStrings:DefaultConnection"
-    },
     "secrets1": {
       "type": "secrets",
-      "connectionId": "VSConnuri"
+      "connectionId": "VSConnuri",
+      "dynamicId": null
     },
     "mssql2": {
       "type": "mssql",

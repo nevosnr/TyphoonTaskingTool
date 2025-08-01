@@ -14,6 +14,11 @@
       "type": "mssql.azure",
       "connectionId": "ConnectionStrings:AzurePubConnection",
       "dynamicId": null
+    },
+    "mssql3": {
+      "ignored": "true",
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:TMSCTasking"
     }
   }
 }
