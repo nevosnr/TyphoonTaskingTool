@@ -29,7 +29,7 @@ public partial class TmscDbContext : DbContext
     public virtual DbSet<RequestUpdate> RequestUpdates { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=TMSCTasking");
+        => optionsBuilder.UseSqlServer("Name=AzurePubConnection");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
