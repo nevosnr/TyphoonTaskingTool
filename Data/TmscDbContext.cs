@@ -7,16 +7,17 @@ namespace TyphoonTaskingTool.Data;
 
 public partial class TmscDbContext : DbContext
 {
-    //public TmscDbContext()
-    //{
-    //}
-
     public TmscDbContext(DbContextOptions<TmscDbContext> options)
         : base(options)
     {
     }
 
-    public virtual DbSet<LookupRank> LookupRanks { get; set; }
+    //Changing this cured issues with Azure Deployment. was previously using local SQL server.
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) //used during runtime to instantiate Db connection.
+        => optionsBuilder.UseSqlServer("Name=AzurePubConnection"); //What kind of Db is the app communicating with?
+
+    //EF Core convention is to puluralise tables in code.
+    public virtual DbSet<LookupRank> LookupRanks { get; set; } //LookupRanks is a collection of LookupRank
 
     public virtual DbSet<LookupStatus> LookupStatuses { get; set; }
 
@@ -28,9 +29,7 @@ public partial class TmscDbContext : DbContext
 
     public virtual DbSet<RequestUpdate> RequestUpdates { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=AzurePubConnection");
-
+    //Used during model creation not runtime.
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<LookupRank>(entity =>
