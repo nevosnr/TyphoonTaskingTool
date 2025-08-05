@@ -1,17 +1,18 @@
 ﻿@inherits LayoutComponentBase
 @layout TyphoonTaskingTool.Components.Layout.MainLayout
 
-<h1>Manage your account</h1>
-
-<div>
-    <h2>Change your account settings</h2>
-    <hr />
-    <div class="row">
-        <div class="col-lg-3">
+<MudPaper Class="px-5">
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="12">
+            <MudStack Row="true" Justify="Justify.SpaceBetween">
+                <MudText Typo="Typo.h3">Manage Your Account</MudText>
+            </MudStack>
+        </MudItem>
+        <MudItem xs="6">
             <ManageNavMenu />
-        </div>
-        <div class="col-lg-9">
+        </MudItem>
+        <MudItem xs="6">
             @Body
-        </div>
-    </div>
-</div>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
