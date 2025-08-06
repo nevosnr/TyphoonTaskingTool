@@ -1,26 +1,32 @@
-<h1 align="center">The Typhoon Mission Support Centre - Front Door</h>
+<h1 align="center">A Simple Task Managment Tool</h>
 <hr>
 <h3 align="center">A Final Project for BSc(Hons) Computer Science by David Neve EngTech TMIET</h3>
 <hr>
 
-## The project : A Comparison Between Low/No-Code Paradigms and Traditional Coding Through Frameworks
-This is an ASP.NET Core project for my final module studying towards a BSc(Hons) Computer Science. It is a 'simple' Service Management tool bespoke to the requirements of my organisation built predominantly using built in frameworks through .Net Core,
-Entity Framework Core, Blazor and addtionally using an external library MudBlazor for UI components to provide a modern look and feel to the application.
+## The project : Are Traditional Coding Methodologies Still Relevant in an Era of Low-Code and No-Code Alternatives?
+This is an ASP.NET Core project for my final module studying towards a BSc(Hons) Computer Science. It is a 'simple' Service Management tool bespoke to the requirements of my organisation built predominantly using built-in frameworks through .Net Core, Entity Framework Core, Blazor and addtionally using an external library MudBlazor for UI components to provide a modern look and feel to the application.
 
-A full stack solution using C# was choosen as I have experiance with C#, mainly through the use of the Unity Engine. I am intending to pivot my current career goals to fit within a C# domain and as such following successful completition of the Academci
-elements this project will iterate into a portfolio piece to demonstrate my skills.
+A full stack solution using C# was choosen as I have experiance with C#, through the use of the Unity Engine. I am intending to pivot my current career goals to fit within a C# domain and as such following successful completition of the Academic elements this project will iterate into a portfolio piece to demonstrate my skills.
 
-ASP.Net Core 9.0 is being utilised for backend connection to a SQL Express Database. Aside from deviations detailled in the academic report it is predominantly boilerplate create code from a Blazor template on
-Visual Studio Community edition 2022.
+ASP.Net Core 9.0 is being utilised for backend connection to a SQL Express Database. Developed using Visual Studio Community edition 2022 and SQL Server Manager Studio 21.
 
-Problems were resolved in the traditional manner - favouring search endgine results and stack overflow. No LLMs, local or cloud based were used in the creation, iteration and delivery of this artifact.
+Problems were resolved in the traditional manner - favouring search engine results and stack overflow. No LLMs, local or cloud based were used in the creation, iteration and delivery of this artifact.
 
 ## Built with:
+A .Net solution using Blazor means a single technology stack for developmnet of this artefact - only knowledge in HTML, CSS, C# and SQL languages were required to develop this artefact.
 
-- C# (https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/)
-- ASP.NET 9.0 (https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-9.0)
-- Blazor (https://learn.microsoft.com/en-us/aspnet/core/blazor/?view=aspnetcore-9.0)
-- MudBlazor (https://mudblazor.com)
+- [C#](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/)
+- [ASP.NET 9.0](https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-9.0)
+- [Blazor](https://learn.microsoft.com/en-us/aspnet/core/blazor/?view=aspnetcore-9.0)
+- [MudBlazor](https://mudblazor.com)
+
+## Deployed to Azure Server:
+
+- .Net app deployed to App Services
+- SQL database migrated to Azure SQL database.
+- Linked to GitHub Repo branch 'PubToAzureBranch' - effectively the production branch on this occasion.
+
+[Tasking Tool](https://tytasktoolapp-a0fdhndwgvg8d7fe.uksouth-01.azurewebsites.net/)
 
 ## Author:
 
@@ -29,9 +35,6 @@ Problems were resolved in the traditional manner - favouring search endgine resu
 - ICT Leader and Software Engineer at the Typhoon Mission Support Centre, RAF Coningsby
 - Exposure to a wide range of technologies and software development paradigms, with a focus on C# and .NET Core.
 - Awareness of multiple project management frameworks, including Agile and Waterfall methodologies.
-- ITILv4 Foundation certified
-- TOGAF 10 Practitioner certified
-
 
 [Profile](https://github.com/nevosnr "David Neve")
 [Email](mailto:david85.neve01@gmail.com)
